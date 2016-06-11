@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="2"
+    android:background="@color/blue_grey_800_50p"
     tools:context="com.lcarrasco.pokedex.MainFragment">
 
     <Button
@@ -16,7 +17,8 @@
         android:gravity="center"
         android:textColor="@color/yellow"
         android:background="@color/red"
-        android:onClick="openPokedex"/>
+        android:onClick="openPokedex"
+        android:layout_marginBottom="2dp"/>
 
     <Button
         android:id="@+id/btn_catch"

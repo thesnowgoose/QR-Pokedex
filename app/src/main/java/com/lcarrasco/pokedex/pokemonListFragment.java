@@ -47,10 +47,10 @@ public class pokemonListFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
-//        if (context instanceof OnPokemonSelected)
-//            mListener = (OnPokemonSelected) context;
-//        else
-//            throw new ClassCastException(context.toString() + " must implement OnPokemonSelected.");
+        if (context instanceof OnPokemonSelected)
+            mListener = (OnPokemonSelected) context;
+        else
+            throw new ClassCastException(context.toString() + " must implement OnPokemonSelected.");
     }
 
     @Override
@@ -102,15 +102,14 @@ public class pokemonListFragment extends Fragment {
 
             final String name = LoadData.pokemonObjList.get(position).getName();
             final Bitmap picture = LoadData.pkmnImagesList.get(position);
-
-            final pokemon p = LoadData.pokemonObjList.get(position);
+            final int id = LoadData.pokemonObjList.get(position).getId();
 
             holder.setData(name, picture);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    mListener.onPokemonSelected(p.getId(), p.getName(), p.getImage());
+                    mListener.onPokemonSelected(id);
                 }
             });
 
@@ -123,7 +122,7 @@ public class pokemonListFragment extends Fragment {
     }
 
     public interface OnPokemonSelected{
-        void onPokemonSelected(int id, String name);
+        void onPokemonSelected(int id);
     }
 
 //    private class GetImages extends AsyncTask<String, Integer, Long> {

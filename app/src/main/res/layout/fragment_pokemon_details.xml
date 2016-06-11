@@ -4,65 +4,92 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="6"
-    android:padding="10dp"
-    tools:context="com.lcarrasco.pokedex.pokemonDetailsFragment">
+    tools:context="com.lcarrasco.pokedex.pokemonDetailsFragment"
+    android:background="@color/red">
 
     <TextView
-        android:id="@+id/detailsPkmnName"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:text="001 Bulbasaur"
+        android:id="@+id/detailsName"
         android:gravity="center"
-        android:text="001 Bulbasaur"/>
+        android:background="@color/beige"
+        android:textColor="@color/blue_grey_800_50p"
+        android:textSize="25dp"
+        android:padding="@dimen/details_margin"
+        android:layout_margin="@dimen/details_margin" />
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
         android:orientation="horizontal"
-        android:weightSum="2">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="2"
+        android:layout_margin="@dimen/details_margin">
 
         <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:id="@+id/detailsImage"
+            android:src="@mipmap/ic_launcher"
+            android:layout_weight="1"
+            android:background="@color/beige"
+            android:padding="@dimen/details_margin"
+            android:layout_marginRight="@dimen/details_margin" />
+
+        <TableLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@mipmap/ic_launcher"/>
+            android:background="@color/beige"
+            android:padding="@dimen/details_margin">
 
-        <ListView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
+            <TableRow>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Type1"
+                    android:textColor="@color/blue_grey_800_50p"
+                    android:textSize="25dp"/>
+            </TableRow>
+            <TableRow>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Type2"
+                    android:textColor="@color/blue_grey_800_50p"
+                    android:textSize="25dp"/>
+            </TableRow>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Tipo1"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Tipo2"/>
-
-
-
-        </ListView>
+        </TableLayout>
     </LinearLayout>
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="@dimen/details_margin"
+        android:layout_weight="4">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:background="@color/beige"
+            android:textColor="@color/blue_grey_800_50p"
+            android:textSize="25dp"
+            android:padding="@dimen/details_margin" />
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Details"/>
-
-        <LargeText
-            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="This is a good pokemon"/>
-
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="For some time after its birth it grows by gaining nourishment from the seed on his back"
+            android:id="@+id/detailsDescription"
+            android:background="@color/beige"
+            android:textColor="@color/blue_grey_800_50p"
+            android:textSize="25dp"
+            android:padding="@dimen/details_margin" />
     </LinearLayout>
-
 </LinearLayout>

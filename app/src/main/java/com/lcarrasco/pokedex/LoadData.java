@@ -29,7 +29,6 @@ public class LoadData {
 
     private static Context context;
 
-    public static List<JSONObject> pkmnList = new ArrayList<>();
     public static  List<Bitmap> pkmnImagesList = new ArrayList<>();
     public static List<pokemon> pokemonObjList = new ArrayList<>();
 
@@ -49,12 +48,12 @@ public class LoadData {
                     try {
                         JSONArray pkmnArray = new JSONArray(response.getString("results"));
                         for (int i = 0; i < pkmnArray.length(); i++) {
-                            System.out.println("Getting info from pokemon " + i+1);
+                            System.out.println("Getting info from pokemon " + i);
                             //pkmnList.add(new JSONObject(pkmnArray.get(i).toString()));
 
                             String name = new JSONObject(pkmnArray.get(i).toString()).getString("name");
 
-                            pokemonObjList.add(new pokemon(i, name));
+                            pokemonObjList.add(new pokemon(i+1, name));
                         }
                     } catch (Exception e) {
                         Toast.makeText(context, "Error Loading JSON", Toast.LENGTH_SHORT).show();

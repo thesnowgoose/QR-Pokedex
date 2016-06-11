@@ -14,6 +14,8 @@ public class MainActivity extends AppCompatActivity
     public final static String qrFragment = "qrFragment";
     public final static String pkmnListFragment = "listFragment";
     public final static String pkmnDetails = "pokemonDetails";
+    public final static String loadingFragment = "loading";
+
 
 //    TextView text;
 
@@ -45,12 +47,17 @@ public class MainActivity extends AppCompatActivity
 //            }
 //        });
 
+//        getSupportFragmentManager()
+//                .beginTransaction()
+//                .add(R.id.main_layout, LoadingFragment.newInstance(), loadingFragment)
+//                .commit();
+
         LoadData.start(this);
 
         if (savedInstanceState == null){
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.main_layout, MainFragment.newInstance(), mainFragment)
+                    .replace(R.id.main_layout, MainFragment.newInstance(), mainFragment)
                     .commit();
         }
     }
@@ -73,10 +80,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onPokemonSelected(int id, String name) {
+    public void onPokemonSelected(int id) {
+        System.out.println(id);
+        pokemonDetailsFragment fragment = pokemonDetailsFragment.newInstance(id);
+
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.main_layout, pokemonDetailsFragment.newInstance(id, name), pkmnDetails)
+                .replace(R.id.main_layout, fragment, pkmnDetails)
                 .addToBackStack(null)
                 .commit();
     }

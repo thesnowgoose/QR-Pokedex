@@ -9,16 +9,12 @@ public class pokemon {
     private String type1;
     private String type2;
     private String details;
-    private Bitmap image;
 
     public pokemon (int id, String name){
         this.id = id;
         this.name = name;
     }
 
-    public void setImage(Bitmap image) {
-        this.image = image;
-    }
 
     public void setId(int id) {
         this.id = id;
@@ -61,7 +57,4 @@ public class pokemon {
         return details;
     }
 
-    public Bitmap getImage() {
-        return image;
-    }
 }
