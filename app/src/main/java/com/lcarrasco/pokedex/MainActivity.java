@@ -1,20 +1,21 @@
 package com.lcarrasco.pokedex;
 
-import android.graphics.Bitmap;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
 public class MainActivity extends AppCompatActivity
-                    implements pokemonListFragment.OnPokemonSelected{
+                    implements pokemonListFragment.OnPokemonSelected,
+                               LoadData.OnFinishLoading {
 
     String url = "http://www.google.com";
     public final static String mainFragment = "mainFragment";
     public final static String qrFragment = "qrFragment";
-    public final static String pkmnListFragment = "listFragment";
+    public final static String pkmnList = "listFragment";
     public final static String pkmnDetails = "pokemonDetails";
-    public final static String loadingFragment = "loading";
+    public final static String loading = "loading";
 
 
 //    TextView text;
@@ -46,20 +47,19 @@ public class MainActivity extends AppCompatActivity
 //                sendRequest4();
 //            }
 //        });
+//        if (savedInstanceState == null){
+//            getSupportFragmentManager()
+//                    .beginTransaction()
+//                    .add(R.id.main_layout, MainFragment.newInstance(), mainFragment)
+//                    .commit();
+//        }
 
-//        getSupportFragmentManager()
-//                .beginTransaction()
-//                .add(R.id.main_layout, LoadingFragment.newInstance(), loadingFragment)
-//                .commit();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.main_layout, LoadingFragment.newInstance(), loading)
+                .commit();
 
-        LoadData.start(this);
-
-        if (savedInstanceState == null){
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.main_layout, MainFragment.newInstance(), mainFragment)
-                    .commit();
-        }
+        LoadData.start(this, this);
     }
 
     public void qrScanner(View v){
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity
     public void openPokedex(View v){
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.main_layout, pokemonListFragment.newInstance(), pkmnListFragment)
+                .replace(R.id.main_layout, pokemonListFragment.newInstance(), pkmnList)
                 .addToBackStack(null)
                 .commit();
     }
@@ -88,6 +88,15 @@ public class MainActivity extends AppCompatActivity
                 .beginTransaction()
                 .replace(R.id.main_layout, fragment, pkmnDetails)
                 .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void onFinishLoading() {
+        // Dismmis Dialog fragment
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.main_layout, MainFragment.newInstance(), mainFragment)
                 .commit();
     }
 

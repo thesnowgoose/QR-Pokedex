@@ -5,12 +5,10 @@
     tools:context="com.lcarrasco.pokedex.LoadingFragment"
     android:background="@color/red">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageView"
+        android:id="@+id/loadingPokeball"
         android:layout_gravity="center"
         android:src="@mipmap/ic_launcher" />
 </FrameLayout>

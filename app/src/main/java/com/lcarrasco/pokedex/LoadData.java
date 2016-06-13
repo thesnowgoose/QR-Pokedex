@@ -28,13 +28,15 @@ public class LoadData {
     public static final String urlImages = "http://pokeapi.co/media/img/<<id>>.png";
 
     private static Context context;
+    private static OnFinishLoading finish;
 
     public static  List<Bitmap> pkmnImagesList = new ArrayList<>();
     public static List<pokemon> pokemonObjList = new ArrayList<>();
 
-    public static void start(Context ctx){
+    public static void start(Context ctx, final OnFinishLoading finsh){
 
         context = ctx;
+        finish = finsh;
 
         if (pkmnImagesList.isEmpty())
             new GetImages().execute();
@@ -102,8 +104,12 @@ public class LoadData {
 
         protected void onPostExecute(Long result) {
             System.out.println("Load images Finished");
-
+            finish.onFinishLoading();
         }
+    }
+
+    public interface OnFinishLoading {
+        void onFinishLoading();
     }
 
 
