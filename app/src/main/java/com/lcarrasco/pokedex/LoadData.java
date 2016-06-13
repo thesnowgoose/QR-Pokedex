@@ -36,8 +36,10 @@ public class LoadData {
 
         context = ctx;
 
-        new GetImages().execute();
-        MySingleton.getInstance(ctx).addToRequestQueue(pokemonList);
+        if (pkmnImagesList.isEmpty())
+            new GetImages().execute();
+        if (pokemonObjList.isEmpty())
+            MySingleton.getInstance(ctx).addToRequestQueue(pokemonList);
     }
 
     private static JsonObjectRequest pokemonList = new JsonObjectRequest(Request.Method.GET, urlDex, null,

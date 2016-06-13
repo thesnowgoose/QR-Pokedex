@@ -12,7 +12,9 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 
@@ -27,6 +29,10 @@ import me.sargunvohra.lib.pokekotlin.json.PokemonSpecies;
 public class qrScannerFragment extends Fragment
         implements QRCodeReaderView.OnQRCodeReadListener{
 
+
+    private ProgressBar spinner;
+    private ImageView pokemonPicture;
+    private TextView pokemonTV;
     boolean permittedScanning = true;
     View view;
 
@@ -41,16 +47,34 @@ public class qrScannerFragment extends Fragment
                              Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.fragment_qr_scanner, container, false);
+        spinner = (ProgressBar) view.findViewById(R.id.progressBar);
+        pokemonPicture = (ImageView) view.findViewById(R.id.pokemonPicture);
+        pokemonTV = (TextView) view.findViewById(R.id.pokemonTextView);
 
         QRCodeReaderView mydecoderview = (QRCodeReaderView) view.findViewById(R.id.qrdecoderview);
         mydecoderview.setOnQRCodeReadListener(this);
 
+        pokemonPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                eraseScreen();
+            }
+        });
+
         return view;
+    }
+
+    private void eraseScreen(){
+        pokemonPicture.setImageBitmap(null);
+        pokemonTV.setText("");
     }
 
     @Override
     public void onQRCodeRead(String text, PointF[] points) {
         if (permittedScanning) {
+            eraseScreen();
+            spinner.setVisibility(View.VISIBLE);
+
             permittedScanning = false;
             new FetchPokemon().execute(text);
         }
@@ -68,8 +92,6 @@ public class qrScannerFragment extends Fragment
 
     private class FetchPokemon extends AsyncTask<String, Integer, Long> {
 
-        final TextView pokemonTV = (TextView) view.findViewById(R.id.pokemonTextView);
-        final ImageView pokemonPicture = (ImageView) view.findViewById(R.id.pokemonPicture);
         boolean pokemonNotFound = false;
         String pkmnName;
         Bitmap bitmap;
@@ -87,12 +109,6 @@ public class qrScannerFragment extends Fragment
                 imageUrl = "http://pokeapi.co/media/img/" + pkmnID + ".png";
                 bitmap = BitmapFactory.decodeStream((InputStream)new URL(imageUrl).getContent());
 
-            } catch (MalformedURLException e) {
-                pokemonNotFound = true;
-                e.printStackTrace();
-            } catch (IOException e) {
-                pokemonNotFound = true;
-                e.printStackTrace();
             } catch (Exception e) {
                 pokemonNotFound = true;
                 e.printStackTrace();
@@ -102,18 +118,26 @@ public class qrScannerFragment extends Fragment
         }
 
         protected void onProgressUpdate(Integer... progress) {
+//            if (pokemonPicture)
+//                pokemonPicture.setImageBitmap(bitmap);
 
 
         }
 
         protected void onPostExecute(Long result) {
+
+            spinner.setVisibility(View.GONE);
+
             if (!pokemonNotFound) {
+
                 pokemonTV.setText(pkmnName);
                 pokemonPicture.setImageBitmap(bitmap);
 
                 Animation fadeInAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
 
                 pokemonPicture.startAnimation(fadeInAnimation);
+            } else {
+                Toast.makeText(getContext(), "Pokémon not found", Toast.LENGTH_SHORT).show();
             }
             permittedScanning = true;
         }

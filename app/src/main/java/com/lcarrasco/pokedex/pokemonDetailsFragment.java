@@ -13,7 +13,6 @@ import java.sql.SQLOutput;
 
 public class pokemonDetailsFragment extends Fragment {
     private final static String ARGS_PKMN_ID = "pkmnid";
-    private final static String ARGS_PKMN_NAME = "pkmnName";
 
     public static pokemonDetailsFragment newInstance(int id){
 
