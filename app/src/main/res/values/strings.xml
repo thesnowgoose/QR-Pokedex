@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Poékdex</string>
     <string name="catchem">Catch \'em all</string>
+
+    <string name="preferencePkmnDesc">com.lcarrasco.pokedex.PREFERENCES</string>
+    <string name="saved_pkmnInfo">com.lcarrasco.pokedex.DESCRIPTION</string>
+
 </resources>

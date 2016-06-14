@@ -1,7 +1,6 @@
 package com.lcarrasco.pokedex;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,14 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
-import org.apache.commons.lang3.text.WordUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -60,11 +57,9 @@ public class pokemonDetailsFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_pokemon_details, container, false);
         final TextView name_tv = (TextView) view.findViewById(R.id.detailsName);
         final ImageView image_iv = (ImageView) view.findViewById(R.id.detailsImage);
-//        final TextView desc_tv = (TextView) view.findViewById(R.id.detailsDescription);
 
-        name_tv.setText(String.format("%03d", id) + " " + LoadData.pokemonObjList.get(id-1).getName());
-        image_iv.setImageBitmap(LoadData.pkmnImagesList.get(id-1));
-//        desc_tv.setText(pkmnDesc);
+        name_tv.setText(String.format("%03d", id) + " " + DownloadData.pokemonObjList.get(id-1).getName());
+        image_iv.setImageBitmap(DownloadData.pkmnImagesList.get(id-1));
 
         return view;
     }
@@ -77,7 +72,6 @@ public class pokemonDetailsFragment extends Fragment {
                     public void onResponse(JSONObject response) {
                         try {
                             JSONArray detailsPkmnArray = new JSONArray(response.getString("flavor_text_entries"));
-                            //pkmnList.add(new JSONObject(pkmnArray.get(i).toString()));
 
                             pkmnDesc = new JSONObject(detailsPkmnArray.get(1)
                                     .toString())
@@ -105,4 +99,5 @@ public class pokemonDetailsFragment extends Fragment {
         });
 
     }
+
 }

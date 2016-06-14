@@ -3,35 +3,15 @@ package com.lcarrasco.pokedex;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 public class pokemonListFragment extends Fragment {
 
@@ -99,25 +79,29 @@ public class pokemonListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, final int position) {
+            try {
 
-            final String name = LoadData.pokemonObjList.get(position).getName();
-            final Bitmap picture = LoadData.pkmnImagesList.get(position);
-            final int id = LoadData.pokemonObjList.get(position).getId();
+                final String name = DownloadData.pokemonObjList.get(position).getName();
+                final Bitmap picture = DownloadData.pkmnImagesList.get(position);
+                final int id = DownloadData.pokemonObjList.get(position).getId();
 
-            holder.setData(name, picture);
+                holder.setData(name, picture);
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mListener.onPokemonSelected(id);
-                }
-            });
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mListener.onPokemonSelected(id);
+                    }
+                });
+            } catch (Exception e) {
+                System.out.println("Error PokemonListFragment: onBindViewHolder - " + e.getMessage());
+            }
 
         }
 
         @Override
         public int getItemCount() {
-            return LoadData.pokemonObjList.size();
+            return DownloadData.pokemonObjList.size();
         }
     }
 

@@ -7,7 +7,7 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity
                     implements pokemonListFragment.OnPokemonSelected,
-                               LoadData.OnFinishLoading {
+                               DownloadData.OnFinishLoading {
 
     String url = "http://www.google.com";
     public final static String mainFragment = "mainFragment";
@@ -58,7 +58,9 @@ public class MainActivity extends AppCompatActivity
                 .add(R.id.main_layout, LoadingFragment.newInstance(), loading)
                 .commit();
 
-        LoadData.start(this, this);
+
+
+        DownloadData.start(this, this);
     }
 
     public void qrScanner(View v){
@@ -92,7 +94,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFinishLoading() {
-        // Dismmis Dialog fragment
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.main_layout, MenuFragment.newInstance(), mainFragment)

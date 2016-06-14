@@ -15,14 +15,12 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoadData {
+public class DownloadData {
 
     public static final int totalPkmn = 151;
     public static final String urlDex = "http://pokeapi.co/api/v2/pokemon/?limit=" + totalPkmn;
@@ -41,10 +39,12 @@ public class LoadData {
         context = ctx;
         finish = finsh;
 
-        if (pkmnImagesList.isEmpty())
-            new GetImages().execute();
         if (pokemonObjList.isEmpty())
             MySingleton.getInstance(ctx).addToRequestQueue(pokemonList);
+
+        else if (pkmnImagesList.isEmpty())
+            new GetImages(ctx).execute();
+
     }
 
 //    private static JsonObjectRequest pokemonList = new JsonObjectRequest(Request.Method.GET, urlDex, null,
@@ -87,15 +87,21 @@ public class LoadData {
                     try {
                         JSONArray pkmnArray = new JSONArray(response.getString("results"));
                         for (int i = 0; i < pkmnArray.length(); i++) {
-                            System.out.println("Getting info from pokemon " + i);
+
+                            int id = i+1;
+                            System.out.println("Getting info from pokemon " + id);
                             //pkmnList.add(new JSONObject(pkmnArray.get(i).toString()));
 
                             String name = new JSONObject(pkmnArray.get(i)
                                     .toString())
                                     .getString("name");
 
-                            pokemonObjList.add(new pokemon(i+1, WordUtils.capitalize(name)));
+                            pokemonObjList.add(new pokemon(id, WordUtils.capitalize(name)));
+//                            Data.save(context, id + "|" + WordUtils.capitalize(name));
+
                         }
+                        if (pkmnImagesList.isEmpty())
+                            new GetImages(context).execute();
                     } catch (Exception e) {
                         Toast.makeText(context, "Error Loading JSON", Toast.LENGTH_SHORT).show();
                         System.out.println(e.getMessage());
@@ -111,25 +117,34 @@ public class LoadData {
         }
     });
 
+
     private static class GetImages extends AsyncTask<String, Integer, Long> {
+
+        private Context context;
+
+        public GetImages(Context context){
+            this.context = context;
+        }
 
         @Override
         protected Long doInBackground(String... params) {
             try {
                 for (int i = 1; i <= totalPkmn ; i++) {
-                    System.out.println("Saving image " + i);
-                    String imageUrl = urlImages.replace("<<id>>", Integer.toString(i));
-                    Bitmap bitmap = BitmapFactory.decodeStream((InputStream)new URL(imageUrl).getContent());
-                    pkmnImagesList.add(bitmap);
+                    String imageName = pokemonObjList.get(i-1).getName();
+                    if (!Data.existImage(context, imageName)) {
+                        System.out.println("Saving image " + i);
+                        String imageUrl = urlImages.replace("<<id>>", Integer.toString(i));
+                        Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(imageUrl).getContent());
+                        pkmnImagesList.add(bitmap);
+                        Data.saveImage(imageName, bitmap, context);
+                    } else {
+                        System.out.println("Loading image " + i);
+                        pkmnImagesList.add(Data.loadImage(imageName, context));
+                    }
+
                 }
-            } catch (MalformedURLException e) {
-                System.out.println("Malformed exception");
-                e.printStackTrace();
-            } catch (IOException e) {
-                System.out.println("IO Exception");
-                e.printStackTrace();
             } catch (Exception e) {
-                System.out.println("Exception");
+                System.out.println("Error DownloadData.java: doInBackground() - " + e.getMessage());
                 e.printStackTrace();
             }
             return null;
