@@ -15,7 +15,7 @@
         android:gravity="center"
         android:background="@color/beige"
         android:textColor="@color/blue_grey_800_50p"
-        android:textSize="25dp"
+        android:textSize="25sp"
         android:padding="@dimen/details_margin"
         android:layout_margin="@dimen/details_margin" />
 
@@ -58,7 +58,7 @@
                     android:layout_height="wrap_content"
                     android:text="Type2"
                     android:textColor="@color/blue_grey_800_50p"
-                    android:textSize="25dp"/>
+                    android:textSize="25sp"/>
             </TableRow>
 
         </TableLayout>
@@ -78,18 +78,22 @@
             android:text="Description"
             android:background="@color/beige"
             android:textColor="@color/blue_grey_800_50p"
-            android:textSize="25dp"
+            android:textSize="25sp"
             android:padding="@dimen/details_margin" />
 
-        <TextView
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="For some time after its birth it grows by gaining nourishment from the seed on his back"
-            android:id="@+id/detailsDescription"
-            android:background="@color/beige"
-            android:textColor="@color/blue_grey_800_50p"
-            android:textSize="25dp"
-            android:padding="@dimen/details_margin" />
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text=""
+                android:id="@+id/detailsDescription"
+                android:background="@color/beige"
+                android:textColor="@color/blue_grey_800_50p"
+                android:textSize="25sp"
+                android:padding="@dimen/details_margin" />
+        </ScrollView>
     </LinearLayout>
 </LinearLayout>

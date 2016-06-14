@@ -105,7 +105,7 @@ public class qrScannerFragment extends Fragment
                 PokemonSpecies pkmnInfo = PokeApi.INSTANCE.getPokemonSpecies(pkmnID);
 
                 pkmnName = pkmnInfo.getName();
-                System.out.println("MESSAGE: Pokemon successfully identified");
+                System.out.println("MESSAGE: Pokemon identified");
                 imageUrl = "http://pokeapi.co/media/img/" + pkmnID + ".png";
                 bitmap = BitmapFactory.decodeStream((InputStream)new URL(imageUrl).getContent());
 
