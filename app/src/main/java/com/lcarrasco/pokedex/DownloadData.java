@@ -79,6 +79,9 @@ public class DownloadData {
 //        }
 //    });
 
+    private JsonObjectRequest buildRequest(String urlDex) {
+        return
+    }
     private static JsonObjectRequest pokemonList = new JsonObjectRequest(Request.Method.GET, urlDex, null,
             new Response.Listener<JSONObject>() {
 
