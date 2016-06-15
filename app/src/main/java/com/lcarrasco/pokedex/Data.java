@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.provider.MediaStore;
-import android.widget.ImageView;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,8 +25,6 @@ public class Data {
     private static String POKEMON_IMAGES = "PokemonImages";
 
     public static void save(Context context, String data){
-
-
         context.getSharedPreferences(Integer.toString(R.string.preferencePkmnDesc), Context.MODE_PRIVATE)
                 .edit()
                 .putString(Integer.toString(R.string.saved_pkmnInfo), data)

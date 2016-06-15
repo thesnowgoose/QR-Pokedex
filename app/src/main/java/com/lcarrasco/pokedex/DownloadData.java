@@ -28,7 +28,6 @@ public class DownloadData {
     public static final String urlImages = "http://pokeapi.co/media/img/<<id>>.png";
 //    public static final String urlImages = "http://pokeapi.co/media/sprites/pokemon/<<id>>.png";
 
-    private static Context context;
     private static OnFinishLoading finish;
 
     public static  List<Bitmap> pkmnImagesList = new ArrayList<>();
@@ -36,11 +35,10 @@ public class DownloadData {
 
     public static void start(Context ctx, final OnFinishLoading finsh){
 
-        context = ctx;
-        finish = finsh;
+        finish = finsh; // finish = (OnFinishLoading)
 
         if (pokemonObjList.isEmpty())
-            MySingleton.getInstance(ctx).addToRequestQueue(pokemonList);
+            MySingleton.getInstance(ctx).addToRequestQueue(buildRequest(urlDex, ctx));
 
         else if (pkmnImagesList.isEmpty())
             new GetImages(ctx).execute();
@@ -79,47 +77,45 @@ public class DownloadData {
 //        }
 //    });
 
-    private JsonObjectRequest buildRequest(String urlDex) {
-        return
-    }
-    private static JsonObjectRequest pokemonList = new JsonObjectRequest(Request.Method.GET, urlDex, null,
-            new Response.Listener<JSONObject>() {
+    private static JsonObjectRequest buildRequest(String urlDex, final Context context) {
 
-                @Override
-                public void onResponse(JSONObject response) {
-                    try {
-                        JSONArray pkmnArray = new JSONArray(response.getString("results"));
-                        for (int i = 0; i < pkmnArray.length(); i++) {
+        return new JsonObjectRequest(Request.Method.GET, urlDex, null,
+                new Response.Listener<JSONObject>() {
 
-                            int id = i+1;
-                            System.out.println("Getting info from pokemon " + id);
-                            //pkmnList.add(new JSONObject(pkmnArray.get(i).toString()));
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray pkmnArray = new JSONArray(response.getString("results"));
+                            for (int i = 0; i < pkmnArray.length(); i++) {
 
-                            String name = new JSONObject(pkmnArray.get(i)
-                                    .toString())
-                                    .getString("name");
+                                int id = i+1;
+                                System.out.println("Getting info from pokemon " + id);
 
-                            pokemonObjList.add(new pokemon(id, WordUtils.capitalize(name)));
-//                            Data.save(context, id + "|" + WordUtils.capitalize(name));
+                                String name = new JSONObject(pkmnArray.get(i)
+                                        .toString())
+                                        .getString("name");
 
+                                pokemonObjList.add(new pokemon(id, WordUtils.capitalize(name)));
+                                Data.save(context, id + "|" + WordUtils.capitalize(name));
+
+                            }
+                            if (pkmnImagesList.isEmpty())
+                                new GetImages(context).execute();
+                        } catch (Exception e) {
+                            Toast.makeText(context, "Error Loading JSON", Toast.LENGTH_SHORT).show();
+                            System.out.println(e.getMessage());
                         }
-                        if (pkmnImagesList.isEmpty())
-                            new GetImages(context).execute();
-                    } catch (Exception e) {
-                        Toast.makeText(context, "Error Loading JSON", Toast.LENGTH_SHORT).show();
-                        System.out.println(e.getMessage());
+
                     }
+                }, new Response.ErrorListener() {
 
-                }
-            }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("No response from API");
 
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            System.out.println("No response from API");
-
-        }
-    });
-
+            }
+        });
+    }
 
     private static class GetImages extends AsyncTask<String, Integer, Long> {
 
@@ -151,10 +147,6 @@ public class DownloadData {
                 e.printStackTrace();
             }
             return null;
-        }
-
-        protected void onProgressUpdate(Integer... progress) {
-
         }
 
         protected void onPostExecute(Long result) {

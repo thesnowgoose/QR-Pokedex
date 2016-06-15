@@ -58,8 +58,6 @@ public class MainActivity extends AppCompatActivity
                 .add(R.id.main_layout, LoadingFragment.newInstance(), loading)
                 .commit();
 
-
-
         DownloadData.start(this, this);
     }
 
