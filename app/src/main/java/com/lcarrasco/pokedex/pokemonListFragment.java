@@ -81,9 +81,9 @@ public class pokemonListFragment extends Fragment {
         public void onBindViewHolder(ViewHolder holder, final int position) {
             try {
 
-                final String name = DownloadData.pokemonObjList.get(position).getName();
-                final Bitmap picture = DownloadData.pkmnImagesList.get(position);
-                final int id = DownloadData.pokemonObjList.get(position).getId();
+                final String name = Data.pokemonObjList.get(position).getName();
+                final Bitmap picture = Data.pkmnImagesList.get(position);
+                final int id = Data.pokemonObjList.get(position).getId();
 
                 holder.setData(name, picture);
 
@@ -101,7 +101,7 @@ public class pokemonListFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return DownloadData.pokemonObjList.size();
+            return Data.pokemonObjList.size();
         }
     }
 

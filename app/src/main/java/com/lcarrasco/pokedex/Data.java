@@ -18,8 +18,8 @@ import java.util.List;
  */
 public class Data {
 
-//    public static List<Bitmap> pkmnImagesList = new ArrayList<>();
-//    public static List<pokemon> pokemonObjList = new ArrayList<>();
+    public static List<Bitmap> pkmnImagesList = new ArrayList<>();
+    public static List<pokemon> pokemonObjList = new ArrayList<>();
 
 
     private static String POKEMON_IMAGES = "PokemonImages";

@@ -30,17 +30,17 @@ public class DownloadData {
 
     private static OnFinishLoading finish;
 
-    public static  List<Bitmap> pkmnImagesList = new ArrayList<>();
-    public static List<pokemon> pokemonObjList = new ArrayList<>();
+//    public static  List<Bitmap> pkmnImagesList = new ArrayList<>();
+//    public static List<pokemon> pokemonObjList = new ArrayList<>();
 
     public static void start(Context ctx, final OnFinishLoading finsh){
 
         finish = finsh; // finish = (OnFinishLoading)
 
-        if (pokemonObjList.isEmpty())
+        if (Data.pokemonObjList.isEmpty())
             MySingleton.getInstance(ctx).addToRequestQueue(buildRequest(urlDex, ctx));
 
-        else if (pkmnImagesList.isEmpty())
+        else if (Data.pkmnImagesList.isEmpty())
             new GetImages(ctx).execute();
 
     }
@@ -95,11 +95,11 @@ public class DownloadData {
                                         .toString())
                                         .getString("name");
 
-                                pokemonObjList.add(new pokemon(id, WordUtils.capitalize(name)));
+                                Data.pokemonObjList.add(new pokemon(id, WordUtils.capitalize(name)));
                                 Data.save(context, id + "|" + WordUtils.capitalize(name));
 
                             }
-                            if (pkmnImagesList.isEmpty())
+                            if (Data.pkmnImagesList.isEmpty())
                                 new GetImages(context).execute();
                         } catch (Exception e) {
                             Toast.makeText(context, "Error Loading JSON", Toast.LENGTH_SHORT).show();
@@ -129,16 +129,16 @@ public class DownloadData {
         protected Long doInBackground(String... params) {
             try {
                 for (int i = 1; i <= totalPkmn ; i++) {
-                    String imageName = pokemonObjList.get(i-1).getName();
+                    String imageName = Data.pokemonObjList.get(i-1).getName();
                     if (!Data.existImage(context, imageName)) {
                         System.out.println("Saving image " + i);
                         String imageUrl = urlImages.replace("<<id>>", Integer.toString(i));
                         Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(imageUrl).getContent());
-                        pkmnImagesList.add(bitmap);
+                        Data.pkmnImagesList.add(bitmap);
                         Data.saveImage(imageName, bitmap, context);
                     } else {
                         System.out.println("Loading image " + i);
-                        pkmnImagesList.add(Data.loadImage(imageName, context));
+                        Data.pkmnImagesList.add(Data.loadImage(imageName, context));
                     }
 
                 }

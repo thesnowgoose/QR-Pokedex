@@ -59,8 +59,8 @@ public class pokemonDetailsFragment extends Fragment {
         final TextView name_tv = (TextView) view.findViewById(R.id.detailsName);
         final ImageView image_iv = (ImageView) view.findViewById(R.id.detailsImage);
 
-        name_tv.setText(String.format("%03d", id) + " " + DownloadData.pokemonObjList.get(id-1).getName());
-        image_iv.setImageBitmap(DownloadData.pkmnImagesList.get(id-1));
+        name_tv.setText(String.format("%03d", id) + " " + Data.pokemonObjList.get(id-1).getName());
+        image_iv.setImageBitmap(Data.pkmnImagesList.get(id-1));
 
         return view;
     }
