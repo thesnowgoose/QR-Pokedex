@@ -18,15 +18,13 @@ import android.widget.Toast;
 
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import me.sargunvohra.lib.pokekotlin.PokeApi;
 import me.sargunvohra.lib.pokekotlin.json.PokemonSpecies;
 
-public class qrScannerFragment extends Fragment
+public class QrScannerFragment extends Fragment
         implements QRCodeReaderView.OnQRCodeReadListener{
 
 
@@ -36,11 +34,11 @@ public class qrScannerFragment extends Fragment
     boolean permittedScanning = true;
     View view;
 
-    public static qrScannerFragment newInstance(){
-        return new qrScannerFragment();
+    public static QrScannerFragment newInstance(){
+        return new QrScannerFragment();
     }
 
-    public qrScannerFragment() {  }
+    public QrScannerFragment() {  }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

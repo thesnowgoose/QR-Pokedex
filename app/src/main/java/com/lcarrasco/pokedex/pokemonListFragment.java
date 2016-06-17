@@ -13,15 +13,15 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class pokemonListFragment extends Fragment {
+public class PokemonListFragment extends Fragment {
 
     private OnPokemonSelected mListener;
 
-    public static pokemonListFragment newInstance(){
-        return new pokemonListFragment();
+    public static PokemonListFragment newInstance(){
+        return new PokemonListFragment();
     }
 
-    public pokemonListFragment() { }
+    public PokemonListFragment() { }
 
     @Override
     public void onAttach(Context context) {
@@ -81,9 +81,9 @@ public class pokemonListFragment extends Fragment {
         public void onBindViewHolder(ViewHolder holder, final int position) {
             try {
 
-                final String name = Data.pokemonObjList.get(position).getName();
-                final Bitmap picture = Data.pkmnImagesList.get(position);
-                final int id = Data.pokemonObjList.get(position).getId();
+                final String name = DataStorage.pokemonObjList.get(position).getName();
+                final Bitmap picture = DataStorage.pkmnImagesList.get(position);
+                final int id = DataStorage.pokemonObjList.get(position).getId();
 
                 holder.setData(name, picture);
 
@@ -101,7 +101,7 @@ public class pokemonListFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return Data.pokemonObjList.size();
+            return DataStorage.pokemonObjList.size();
         }
     }
 
@@ -109,37 +109,4 @@ public class pokemonListFragment extends Fragment {
         void onPokemonSelected(int id);
     }
 
-//    private class GetImages extends AsyncTask<String, Integer, Long> {
-//
-//        @Override
-//        protected Long doInBackground(String... params) {
-//            try {
-//                for (int i = 1; i <= totalPkmn ; i++) {
-//                    System.out.println("Saving image " + i);
-//                    String imageUrl = urlImages.replace("<<id>>", Integer.toString(i));
-//                    Bitmap bitmap = BitmapFactory.decodeStream((InputStream)new URL(imageUrl).getContent());
-//                    pkmnImagesList.add(bitmap);
-//                }
-//            } catch (MalformedURLException e) {
-//                System.out.println("Malformed exception");
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                System.out.println("IO Exception");
-//                e.printStackTrace();
-//            } catch (Exception e) {
-//                System.out.println("Exception");
-//                e.printStackTrace();
-//            }
-//            return null;
-//        }
-//
-//        protected void onProgressUpdate(Integer... progress) {
-//
-//        }
-//
-//        protected void onPostExecute(Long result) {
-//            System.out.println("Load images Finished");
-//
-//        }
-//    }
 }

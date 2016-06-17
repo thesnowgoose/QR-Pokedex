@@ -6,28 +6,4 @@
     android:layout_height="match_parent"
     tools:context="com.lcarrasco.pokedex.MainActivity">
 
-    <!--<Button-->
-        <!--android:id="@+id/btn_pokedex"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_weight="1"-->
-        <!--android:text="@string/app_name"-->
-        <!--android:textSize="40dp"-->
-        <!--android:gravity="center"-->
-        <!--android:textColor="@color/yellow"-->
-        <!--android:background="@color/red"-->
-        <!--android:onClick="openPokedex"/>-->
-
-    <!--<Button-->
-        <!--android:id="@+id/btn_catch"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_weight="1"-->
-        <!--android:text="@string/catchem"-->
-        <!--android:textSize="40dp"-->
-        <!--android:gravity="center"-->
-        <!--android:textColor="@color/yellow"-->
-        <!--android:background="@color/red"-->
-        <!--android:onClick="qrScanner"/>-->
-
 </RelativeLayout>

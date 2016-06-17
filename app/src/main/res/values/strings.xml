@@ -2,7 +2,7 @@
     <string name="app_name">Poékdex</string>
     <string name="catchem">Catch \'em all</string>
 
-    <string name="preferencePkmnDesc">com.lcarrasco.pokedex.PREFERENCES</string>
-    <string name="saved_pkmnInfo">com.lcarrasco.pokedex.DESCRIPTION</string>
+    <string name="preferencesPkmnFile">com.lcarrasco.pokedex.PREFERENCES_FILE</string>
+    <string name="saved_pkmnInfo">com.lcarrasco.pokedex.INFO_PKMN</string>
 
 </resources>

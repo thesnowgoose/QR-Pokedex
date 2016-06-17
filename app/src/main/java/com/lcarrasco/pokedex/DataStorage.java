@@ -16,44 +16,53 @@ import java.util.List;
 /**
  * Created by theSnowGoose on 6/14/16.
  */
-public class Data {
+public class DataStorage {
 
     public static List<Bitmap> pkmnImagesList = new ArrayList<>();
-    public static List<pokemon> pokemonObjList = new ArrayList<>();
+    public static List<Pokemon> pokemonObjList = new ArrayList<>();
+
+    private static String POKEMON_IMAGES = "Images";
 
 
-    private static String POKEMON_IMAGES = "PokemonImages";
+    public static void save(Context context, int id, String data){
+//        if (data.split("\\|").length < 3)
+//            data = id + "|" + data;
+        String newData = "";
+        if (isStored(context, id)) {
+            newData = load(context, id) + "|" + data;
+        } else
+            newData = id + "|" + data;
 
-    public static void save(Context context, String data){
-        context.getSharedPreferences(Integer.toString(R.string.preferencePkmnDesc), Context.MODE_PRIVATE)
+        String key = Integer.toString(R.string.saved_pkmnInfo) + id;
+
+        context.getSharedPreferences(Integer.toString(R.string.preferencesPkmnFile), Context.MODE_PRIVATE)
                 .edit()
-                .putString(Integer.toString(R.string.saved_pkmnInfo), data)
+                .putString(key, newData)
                 .commit();
     }
 
-    public static String load(Context context){
+    public static String load(Context context, int id){
+        String key = Integer.toString(R.string.saved_pkmnInfo) + id;
+
         return context
-                .getSharedPreferences(Integer.toString(R.string.preferencePkmnDesc), Context.MODE_PRIVATE)
-                .getString(Integer.toString(R.string.preferencePkmnDesc), null);
+                .getSharedPreferences(Integer.toString(R.string.preferencesPkmnFile), Context.MODE_PRIVATE)
+                .getString(key, null);
 
     }
 
-    public static boolean isDataSaved(Context context){
-        if (load(context) != null)
-            return true;
-        else
-            return false;
+    public static boolean isStored(Context context, int id){
+        return load(context, id) != null;
     }
 
 
     // IMAGES
     private static File getImageFile(String imageName, Context context){
-        ContextWrapper cw = new ContextWrapper(context);
-        File directory = cw.getDir(POKEMON_IMAGES, Context.MODE_PRIVATE);
+        File directory = new ContextWrapper(context)
+                .getDir(POKEMON_IMAGES, Context.MODE_PRIVATE);
         return new File(directory, imageName + ".png");
     }
 
-    public static boolean existImage(Context context, String imageName){
+    public static boolean imageExists(Context context, String imageName){
         File file = getImageFile(imageName, context);
 
         if(file.exists()) {
@@ -95,4 +104,20 @@ public class Data {
         return image;
 
     }
+
+//    public static void deleteImagesCache(boolean delete, Context context){
+//        //PokemonImages
+//        if (delete) {
+//            File directory = new ContextWrapper(context)
+//                    .getDir(POKEMON_IMAGES, Context.MODE_PRIVATE);
+//            if (directory.exists())
+//                directory.delete();
+//
+//            File directory2 = new ContextWrapper(context)
+//                    .getDir("PokemonImages", Context.MODE_PRIVATE);
+//            if (directory2.exists())
+//                directory2.delete();
+//        }
+//
+//    }
 }

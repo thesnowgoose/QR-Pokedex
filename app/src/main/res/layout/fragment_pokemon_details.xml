@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="2"
-    tools:context="com.lcarrasco.pokedex.pokemonDetailsFragment"
+    tools:context=".PokemonDetailsFragment"
     android:background="@color/red">
 
     <LinearLayout
@@ -50,17 +50,19 @@
 
             <TableRow>
                 <TextView
+                    android:id="@+id/type1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Type1"
+                    android:text=""
                     android:textColor="@color/blue_grey_800_50p"
-                    android:textSize="25dp"/>
+                    android:textSize="25sp"/>
             </TableRow>
             <TableRow>
                 <TextView
+                    android:id="@+id/type2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Type2"
+                    android:text=""
                     android:textColor="@color/blue_grey_800_50p"
                     android:textSize="25sp"/>
             </TableRow>

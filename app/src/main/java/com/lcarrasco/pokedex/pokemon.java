@@ -1,18 +1,36 @@
 package com.lcarrasco.pokedex;
 
-import android.graphics.Bitmap;
-
-public class pokemon {
+public class Pokemon {
 
     private int id;
     private String name;
     private String type1;
     private String type2;
-    private String details;
+    private String description;
 
-    public pokemon (int id, String name){
-        this.id = id;
+    public Pokemon(String id, String name) {
+        this.id = Integer.parseInt(id);
         this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getType1() {
+        return type1;
+    }
+
+    public String getType2() {
+        return type2;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
 
@@ -32,29 +50,9 @@ public class pokemon {
         this.type2 = type2;
     }
 
-    public void setDetails(String details) {
-        this.details = details;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getType1() {
-        return type1;
-    }
-
-    public String getType2() {
-        return type2;
-    }
-
-    public String getDetails() {
-        return details;
-    }
 
 }
