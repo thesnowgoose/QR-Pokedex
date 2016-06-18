@@ -1,6 +1,7 @@
 package com.lcarrasco.pokedex;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -42,12 +43,13 @@ public class MainActivity extends AppCompatActivity
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.main_layout, QrScannerFragment.newInstance(), QR_FRAGMENT)
-                        .addToBackStack(null)
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .commit();
+//                getSupportFragmentManager()
+//                        .beginTransaction()
+//                        .replace(R.id.main_layout, QrScannerFragment.newInstance(), QR_FRAGMENT)
+//                        .addToBackStack(null)
+//                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+//                        .commit();
+                startActivity(new Intent(this, QrScannerActivity.class));
 
             } else {
                 Toast.makeText(this, "You can't scan Pokémon", Toast.LENGTH_SHORT);

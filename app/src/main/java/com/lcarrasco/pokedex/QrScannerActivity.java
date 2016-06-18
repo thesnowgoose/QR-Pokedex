@@ -1,14 +1,11 @@
 package com.lcarrasco.pokedex;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.PointF;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -17,39 +14,34 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
 
-import java.io.InputStream;
-import java.net.URL;
+import org.apache.commons.lang3.text.WordUtils;
 
 import me.sargunvohra.lib.pokekotlin.PokeApi;
 import me.sargunvohra.lib.pokekotlin.json.PokemonSpecies;
 
-public class QrScannerFragment extends Fragment
-        implements QRCodeReaderView.OnQRCodeReadListener{
-
+public class QrScannerActivity extends AppCompatActivity
+        implements QRCodeReaderView.OnQRCodeReadListener {
 
     private ProgressBar spinner;
-    private ImageView pokemonPicture;
+    private SimpleDraweeView pokemonPicture;
     private TextView pokemonTV;
     boolean permittedScanning = true;
     View view;
 
-    public static QrScannerFragment newInstance(){
-        return new QrScannerFragment();
-    }
-
-    public QrScannerFragment() {  }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_qr_scanner);
 
-        view = inflater.inflate(R.layout.fragment_qr_scanner, container, false);
-        spinner = (ProgressBar) view.findViewById(R.id.progressBar);
-        pokemonPicture = (ImageView) view.findViewById(R.id.pokemonPicture);
-        pokemonTV = (TextView) view.findViewById(R.id.pokemonTextView);
+        spinner = (ProgressBar) findViewById(R.id.progressBar);
+        pokemonPicture = (SimpleDraweeView) findViewById(R.id.pokemonPicture);
+        pokemonTV = (TextView) findViewById(R.id.pokemonTextView);
 
-        QRCodeReaderView mydecoderview = (QRCodeReaderView) view.findViewById(R.id.qrdecoderview);
+        QRCodeReaderView mydecoderview = (QRCodeReaderView) findViewById(R.id.qrdecoderview);
         mydecoderview.setOnQRCodeReadListener(this);
 
         pokemonPicture.setOnClickListener(new View.OnClickListener() {
@@ -58,8 +50,6 @@ public class QrScannerFragment extends Fragment
                 eraseScreen();
             }
         });
-
-        return view;
     }
 
     private void eraseScreen(){
@@ -89,23 +79,21 @@ public class QrScannerFragment extends Fragment
     }
 
     private class FetchPokemon extends AsyncTask<String, Integer, Long> {
-
         boolean pokemonNotFound = false;
         String pkmnName;
-        Bitmap bitmap;
+        Uri uri;
 
         @Override
-        protected Long doInBackground(String... params) {
-            String imageUrl;
+        protected Long doInBackground(String... url) {
 
             try {
-                int pkmnID = Integer.parseInt(params[0].split("/pokemon/")[1]);
+                int pkmnID = Integer.parseInt(url[0].split("/pokemon/")[1]);
                 PokemonSpecies pkmnInfo = PokeApi.INSTANCE.getPokemonSpecies(pkmnID);
 
                 pkmnName = pkmnInfo.getName();
                 System.out.println("MESSAGE: Pokemon identified");
-                imageUrl = "http://pokeapi.co/media/img/" + pkmnID + ".png";
-                bitmap = BitmapFactory.decodeStream((InputStream)new URL(imageUrl).getContent());
+
+                uri = Uri.parse("http://www.pkparaiso.com/imagenes/xy/sprites/animados/" + pkmnName + ".gif");
 
             } catch (Exception e) {
                 pokemonNotFound = true;
@@ -115,31 +103,24 @@ public class QrScannerFragment extends Fragment
             return null;
         }
 
-        protected void onProgressUpdate(Integer... progress) {
-//            if (pokemonPicture)
-//                pokemonPicture.setImageBitmap(bitmap);
-
-
-        }
-
         protected void onPostExecute(Long result) {
 
             spinner.setVisibility(View.GONE);
 
             if (!pokemonNotFound) {
 
-                pokemonTV.setText(pkmnName);
-                pokemonPicture.setImageBitmap(bitmap);
-
-                Animation fadeInAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
-
-                pokemonPicture.startAnimation(fadeInAnimation);
+                pokemonTV.setText(WordUtils.capitalize(pkmnName));
+                pokemonPicture.setController(
+                        Fresco.newDraweeControllerBuilder()
+                        .setUri(uri)
+                        .setAutoPlayAnimations(true)
+                        .build());
             } else {
-                Toast.makeText(getContext(), "Pokémon not found", Toast.LENGTH_SHORT).show();
+                Toast.makeText(QrScannerActivity.this, "Pokémon not found", Toast.LENGTH_SHORT).show();
             }
             permittedScanning = true;
         }
 
-    }
 
+    }
 }

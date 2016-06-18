@@ -117,8 +117,8 @@ public class PokemonDetailsFragment extends Fragment {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                    System.out.println("No response from API pokemonDetailsFragment: buildDescRequest - " + error);
-                    error.printStackTrace();
+                System.out.println("No response from API pokemonDetailsFragment: buildDescRequest - " + error);
+                error.printStackTrace();
             }
         });
     }
@@ -158,7 +158,7 @@ public class PokemonDetailsFragment extends Fragment {
                         System.out.println("No response from API pokemonDetailsFragment: buildDescRequest - " + volleyError);
                         volleyError.printStackTrace();
                     }
-        });
+                });
     }
 
     private void updateDataAndList(String t1, String t2){
