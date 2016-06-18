@@ -47,15 +47,12 @@ public class PokemonDetailsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
         id = getArguments().getInt(ARGS_PKMN_ID);
 
         if (DataStorage.load(context, id).split("\\|").length < 4) { // Has pokemon description and type?
             // If its less than 4, it means details hasn't been saved yet
             String mutableUrl = _RootUrl + _DescriptionUrl + id;
             VolleyRequestQueue.getInstance(context).addRequest(buildDescRequest(mutableUrl));
-//            mutableUrl = _RootUrl + _TypesUrl + id;
-//            VolleyRequestQueue.getInstance(context).addRequest(buildTypesRequest(mutableUrl));
         }
         else {
             previousDescFound = true;

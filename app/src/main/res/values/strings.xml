@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Poékdex</string>
+    <string name="app_name">Pokédex</string>
     <string name="catchem">Catch \'em all</string>
 
     <string name="preferencesPkmnFile">com.lcarrasco.pokedex.PREFERENCES_FILE</string>
