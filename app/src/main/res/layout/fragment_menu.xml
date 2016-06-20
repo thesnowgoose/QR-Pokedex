@@ -3,33 +3,60 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="2"
-    android:background="@color/blue_grey_800_50p"
+    android:background="@android:color/white"
     tools:context=".MenuFragment">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:text="@string/app_name"
+        android:textColor="@color/red_bright"
+        android:gravity="center"
+        android:textSize="50sp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="20dp" />
 
     <Button
         android:id="@+id/btn_pokedex"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="@string/app_name"
-        android:textSize="40dp"
+        android:layout_width="300dp"
+        android:layout_height="65dp"
+        android:text="@string/captured"
+        android:textSize="20sp"
         android:gravity="center"
-        android:textColor="@color/beige"
-        android:background="@color/red"
+        android:textColor="@android:color/white"
+        android:background="@drawable/selector_button"
         android:onClick="openPokedex"
-        android:layout_marginBottom="2dp"/>
+        android:layout_marginBottom="22dp"
+        android:layout_marginTop="22dp"
+        android:layout_gravity="center_horizontal" />
 
     <Button
         android:id="@+id/btn_catch"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_width="300dp"
+        android:layout_height="65dp"
         android:text="@string/catchem"
-        android:textSize="40dp"
+        android:textSize="20sp"
         android:gravity="center"
-        android:textColor="@color/beige"
-        android:background="@color/red"
-        android:onClick="qrScanner"/>
+        android:textColor="@android:color/white"
+        android:background="@drawable/selector_button"
+        android:onClick="qrScanner"
+        android:layout_marginTop="22dp"
+        android:layout_marginBottom="22dp"
+        android:layout_gravity="center_horizontal" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:id="@+id/textView2"
+            android:background="@color/red_bright" />
+
+    </LinearLayout>
 
 </LinearLayout>

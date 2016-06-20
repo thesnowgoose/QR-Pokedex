@@ -34,7 +34,9 @@ public class MainActivity extends AppCompatActivity
                 .add(R.id.main_layout, LoadingFragment.newInstance(), LOADING)
                 .commit();
 
-        DownloadData.start(this, this);
+        //DownloadData.start(this, this);
+        DownloadData.OnFinishLoading a = (DownloadData.OnFinishLoading) this;
+        a.onFinishLoading();
     }
 
     @Override

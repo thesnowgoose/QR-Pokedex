@@ -4,6 +4,7 @@ public class Pokemon {
 
     private int id;
     private String name;
+    private Object[] types;
     private String type1;
     private String type2;
     private String description;
@@ -33,6 +34,10 @@ public class Pokemon {
         return description;
     }
 
+    public Object[] getTypes() {
+        return types;
+    }
+
 
     public void setId(int id) {
         this.id = id;
@@ -52,6 +57,10 @@ public class Pokemon {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setTypes(Object[] types) {
+        this.types = types;
     }
 
 

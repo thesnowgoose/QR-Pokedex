@@ -6,22 +6,25 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import org.apache.commons.lang3.text.WordUtils;
 
-import me.sargunvohra.lib.pokekotlin.PokeApi;
-import me.sargunvohra.lib.pokekotlin.json.PokemonSpecies;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class QrScannerActivity extends AppCompatActivity
         implements QRCodeReaderView.OnQRCodeReadListener {
@@ -29,8 +32,9 @@ public class QrScannerActivity extends AppCompatActivity
     private ProgressBar spinner;
     private SimpleDraweeView pokemonPicture;
     private TextView pokemonTV;
-    boolean permittedScanning = true;
-    View view;
+
+    private boolean permittedScanning = true;
+    private String urlPokeApi = "http://pokeapi.co/api/v2/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,19 +62,65 @@ public class QrScannerActivity extends AppCompatActivity
     }
 
     @Override
-    public void onQRCodeRead(String text, PointF[] points) {
+    public void onQRCodeRead(String data, PointF[] points) {
         if (permittedScanning) {
             eraseScreen();
             spinner.setVisibility(View.VISIBLE);
 
             permittedScanning = false;
-            new FetchPokemon().execute(text);
+            consumePokeApi(data);
         }
+    }
+
+    private void consumePokeApi(String data) {
+
+        String pkmnID;
+        final boolean pokemonNotFound = false;
+
+        if (!validQRCode(data))
+            showMissingNo(pokemonNotFound);
+        else {
+            pkmnID = data.split("/pokemon/")[1];
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(urlPokeApi)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            IPokemonApi pokeApiService = retrofit.create(IPokemonApi.class);
+            Call<Pokemon> pokemonCall = pokeApiService.getPokemon(pkmnID);
+
+            pokemonCall.enqueue(new Callback<Pokemon>() {
+                Uri uri;
+
+                @Override
+                public void onResponse(Call<Pokemon> call, Response<Pokemon> response) {
+                    int statusCode = response.code();
+                    Pokemon p = response.body();
+                    if (statusCode == 200)
+                        new GetPokemonImage(pokemonNotFound).execute(p.getName());
+                    else
+                        showMissingNo(pokemonNotFound);
+                }
+
+                @Override
+                public void onFailure(Call<Pokemon> call, Throwable t) {
+                    showMissingNo(pokemonNotFound);
+                }
+            });
+        }
+    }
+
+    private void showMissingNo(boolean pokemonNotFound){
+        new GetPokemonImage(!pokemonNotFound).execute();
+    }
+
+    private boolean validQRCode(String qrCodeString){
+        return qrCodeString.contains("/pokemon/");
     }
 
     @Override
     public void cameraNotFound() {
-
+        Toast.makeText(this, "Camera not found", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -78,49 +128,69 @@ public class QrScannerActivity extends AppCompatActivity
 
     }
 
-    private class FetchPokemon extends AsyncTask<String, Integer, Long> {
-        boolean pokemonNotFound = false;
-        String pkmnName;
-        Uri uri;
+    private class GetPokemonImage extends AsyncTask<String, Integer, Long> {
 
-        @Override
-        protected Long doInBackground(String... url) {
+        private String pkmnName;
+        private boolean pokemonNotFound = false;
+        private Uri uri;
 
+        public GetPokemonImage(boolean pokemonNotFound){
+            this.pokemonNotFound = pokemonNotFound;
+        }
+
+        private boolean exists(URL url){
             try {
-                int pkmnID = Integer.parseInt(url[0].split("/pokemon/")[1]);
-                PokemonSpecies pkmnInfo = PokeApi.INSTANCE.getPokemonSpecies(pkmnID);
+                HttpURLConnection huc = (HttpURLConnection) url.openConnection();
+                huc.setRequestMethod("GET");  //OR  huc.setRequestMethod ("HEAD");
+                huc.connect();
+                int code = huc.getResponseCode();
 
-                pkmnName = pkmnInfo.getName();
-                System.out.println("MESSAGE: Pokemon identified");
-
-                uri = Uri.parse("http://www.pkparaiso.com/imagenes/xy/sprites/animados/" + pkmnName + ".gif");
+                if (code == 200)
+                    return true;
 
             } catch (Exception e) {
-                pokemonNotFound = true;
                 e.printStackTrace();
             }
+            return false;
+        }
 
+        @Override
+        protected Long doInBackground(String... args) {
+            if (args.length > 0)
+                pkmnName = args[0];
+
+            if (pokemonNotFound) {
+                uri = Uri.parse("http://vignette3.wikia.nocookie.net/mugen/images/2/20/Missing-.gif");
+                pkmnName = "?";
+            } else {
+                System.out.println("MESSAGE: Pokemon identified");
+                String pkmnImage = "http://www.pokestadium.com/sprites/black-white/animated/" + pkmnName + ".gif";
+                try {
+                    if (exists(new URL(pkmnImage)))
+                        uri = Uri.parse(pkmnImage);
+                    else
+                        uri = Uri.parse("http://www.pkparaiso.com/imagenes/xy/sprites/animados/" + pkmnName + ".gif");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
             return null;
         }
 
         protected void onPostExecute(Long result) {
-
             spinner.setVisibility(View.GONE);
 
-            if (!pokemonNotFound) {
+            pokemonTV.setText(WordUtils.capitalize(pkmnName));
+            pokemonPicture.setController(
+                    Fresco.newDraweeControllerBuilder()
+                            .setUri(uri)
+                            .setAutoPlayAnimations(true)
+                            .build());
 
-                pokemonTV.setText(WordUtils.capitalize(pkmnName));
-                pokemonPicture.setController(
-                        Fresco.newDraweeControllerBuilder()
-                        .setUri(uri)
-                        .setAutoPlayAnimations(true)
-                        .build());
-            } else {
-                Toast.makeText(QrScannerActivity.this, "Pokémon not found", Toast.LENGTH_SHORT).show();
-            }
+            pokemonPicture.getHierarchy()
+                    .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
+
             permittedScanning = true;
         }
-
-
     }
 }
