@@ -1,18 +1,27 @@
-package com.lcarrasco.pokedex;
+package com.lcarrasco.model;
 
-public class Pokemon {
+import io.realm.RealmObject;
+import java.util.ArrayList;
+import java.util.List;
 
-    private int id;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+
+public class Pokemon extends RealmObject {
+
+    @SerializedName("name")
+    @Expose
     private String name;
-    private Object[] types;
+    @SerializedName("id")
+    @Expose
+    private Integer id;
+
     private String type1;
     private String type2;
+
     private String description;
 
-    public Pokemon(String id, String name) {
-        this.id = Integer.parseInt(id);
-        this.name = name;
-    }
 
     public int getId() {
         return id;
@@ -20,6 +29,10 @@ public class Pokemon {
 
     public String getName() {
         return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public String getType1() {
@@ -30,22 +43,6 @@ public class Pokemon {
         return type2;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public Object[] getTypes() {
-        return types;
-    }
-
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public void setType1(String type1) {
         this.type1 = type1;
@@ -55,13 +52,16 @@ public class Pokemon {
         this.type2 = type2;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
-
-    public void setTypes(Object[] types) {
-        this.types = types;
-    }
-
 
 }

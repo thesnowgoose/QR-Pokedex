@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -17,7 +18,6 @@ public class MainActivity extends AppCompatActivity
                                DownloadData.OnFinishLoading {
 
     public final static String MEUNU_FRAGMENT = "menu";
-    public final static String QR_FRAGMENT = "QR_FRAGMENT";
     public final static String PKMN_LIST = "listFragment";
     public final static String PKMN_DETAILS = "details";
     public final static String LOADING = "LOADING";
@@ -34,10 +34,33 @@ public class MainActivity extends AppCompatActivity
                 .add(R.id.main_layout, LoadingFragment.newInstance(), LOADING)
                 .commit();
 
-        //DownloadData.start(this, this);
-        DownloadData.OnFinishLoading a = (DownloadData.OnFinishLoading) this;
-        a.onFinishLoading();
+        DataStorage.deleteImagesCache(false, this);
+
+        DownloadData.start(this, this);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DataStorage.closeRealm();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.getSupportFragmentManager().popBackStack();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        if (getSupportFragmentManager().getBackStackEntryCount() == 1)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -45,12 +68,6 @@ public class MainActivity extends AppCompatActivity
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-//                getSupportFragmentManager()
-//                        .beginTransaction()
-//                        .replace(R.id.main_layout, QrScannerFragment.newInstance(), QR_FRAGMENT)
-//                        .addToBackStack(null)
-//                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-//                        .commit();
                 startActivity(new Intent(this, QrScannerActivity.class));
 
             } else {
@@ -59,7 +76,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void qrScanner(View v){
+    public void qrScanner(View v) {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -68,15 +85,19 @@ public class MainActivity extends AppCompatActivity
                     Manifest.permission.CAMERA)) {
 
                 Toast.makeText(this, "You can't scan Pokémon", Toast.LENGTH_SHORT);
+
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CAMERA},
+                        PERMISIONS_REQUEST_CAMERA);
             }
-        } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CAMERA},
-                    PERMISIONS_REQUEST_CAMERA );
-        }
+        } else
+            startActivity(new Intent(this, QrScannerActivity.class));
     }
 
     public void openPokedex(View v){
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.main_layout, PokemonListFragment.newInstance(), PKMN_LIST)
@@ -86,7 +107,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onPokemonSelected(int id) {
-        System.out.println(id);
         PokemonDetailsFragment fragment = PokemonDetailsFragment.newInstance(id);
 
         getSupportFragmentManager()

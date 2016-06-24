@@ -4,25 +4,30 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.lcarrasco.model.IPokemonApi;
+import com.lcarrasco.model.Pokemon;
+import com.lcarrasco.model.PokemonListResult;
+import com.lcarrasco.model.Result;
 
 import org.apache.commons.lang3.text.WordUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 // TODO change class name
 public class DownloadData {
 
     public static final int _TotalPkmn = 151;
-    public static final String _UrlPkmnList = "http://pokeapi.co/api/v2/pokemon/?limit=" + _TotalPkmn;
+    private static String _UrlPokeApi = "http://pokeapi.co/api/v2/";
     public static final String _UrlImages = "http://pokeapi.co/media/img/";
 
     private static OnFinishLoading finish;
@@ -31,67 +36,58 @@ public class DownloadData {
 
         finish = finsh;
 
-        if (DataStorage.pokemonObjList.isEmpty()) {
-            if (DataStorage.isStored(context, 1)) {
-                for (int i = 0; i < _TotalPkmn; i++) {
-                    int id = i + 1;
-                    System.out.println("Loading data from " + id);
-                    String[] pokemonInfo = DataStorage.load(context, id).split("\\|");
-                    DataStorage.pokemonObjList.add(createPkmn(pokemonInfo));
-                }
+        if (DataStorage.pokemonList.isEmpty()) {
+            DataStorage.initRealm(context);
+            if (DataStorage.pokemonSaved()) {
+                // Loads realm onto DataStorage.pokemonList
+                DataStorage.loadRealm();
                 new getImages(context).execute();
             } else
-                VolleyRequestQueue.getInstance(context).addRequest(buildPkmnListRequest(_UrlPkmnList, context));
+                buildPkmnListRequest(context);
         }
     }
 
     private static Pokemon createPkmn(String... data){
-        Pokemon p = new Pokemon(data[0], data[1]);
+        Pokemon p = new Pokemon();
 
-        if(data.length > 2)
-            p.setDescription(data[2]);
-        if(data.length > 3)
-            p.setType1(data[3]);
-        if(data.length > 4)
-            p.setType2(data[4]);
+        p.setId(Integer.parseInt(data[0]));
+        p.setName(data[1]);
 
         return p;
     }
 
-    private static JsonObjectRequest buildPkmnListRequest(String urlDex, final Context context) {
+    private static void buildPkmnListRequest(final Context context) {
 
-        return new JsonObjectRequest(Request.Method.GET, urlDex, null,
-                new Response.Listener<JSONObject>() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(_UrlPokeApi)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONArray pkmnArray = new JSONArray(response.getString("results"));
-                            for (int id = 1; id <= _TotalPkmn; id++) {
-                                String name = new JSONObject(
-                                        pkmnArray.get(id-1)
-                                        .toString())
-                                        .getString("name");
+        IPokemonApi pokeApiService = retrofit.create(IPokemonApi.class);
+        Call<PokemonListResult> pokemonListCall = pokeApiService.getPokemonList(Integer.toString(_TotalPkmn));
 
-                                System.out.println("Downloading info from pokemon " + id);
-                                DataStorage.save(context, id,  WordUtils.capitalize(name));
-                                DataStorage.pokemonObjList.add(createPkmn(
-                                        Integer.toString(id),
-                                        WordUtils.capitalize(name)));
-                            }
-                            if (DataStorage.pkmnImagesList.isEmpty())
-                                new getImages(context).execute();
-                        } catch (Exception e) {
-                            Toast.makeText(context, "Error Loading JSON", Toast.LENGTH_SHORT).show();
-                            System.out.println(e.getMessage());
-                        }
+        pokemonListCall.enqueue(new Callback<PokemonListResult>() {
+            @Override
+            public void onResponse(Call<PokemonListResult> call, Response<PokemonListResult> response) {
+                if (response.code() != 200)
+                    // TODO do something if result is bad
+                    System.out.println(response.code() + " it did not work");
+                else {
+                    List<Pokemon> pokemonList = new ArrayList<>();
+                    for (int i = 0; i < response.body().getResults().size(); i++) {
+                        String id = Integer.toString(i+1);
+                        Result pokemonResult = response.body().getResults().get(i);
+                        String name = pokemonResult.getName();
+                        pokemonList.add(createPkmn(id, WordUtils.capitalize(name)));
                     }
-                }, new Response.ErrorListener() {
+                    DataStorage.saveRealm(pokemonList);
+                    new getImages(context).execute();
+                }
+            }
 
             @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(context, "No response from internet", Toast.LENGTH_LONG).show();
-                System.out.println("No response from API");
+            public void onFailure(Call<PokemonListResult> call, Throwable t) {
+                System.out.println("Failure to get request");
             }
         });
     }
@@ -109,17 +105,10 @@ public class DownloadData {
             try {
                 for (int i = 0; i < _TotalPkmn; i++) {
                     int id = i+1;
-                    String imageName = DataStorage.pokemonObjList.get(i).getName();
-                    if (!DataStorage.imageExists(context, imageName)) {
-                        System.out.println("Downloading image " + id);
-                        String imageUrl = _UrlImages + id + ".png";
-                        Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(imageUrl).getContent());
-                        DataStorage.pkmnImagesList.add(bitmap);
-                        DataStorage.saveImage(imageName, bitmap, context);
-                    } else {
-                        System.out.println("Loading image " + id);
-                        DataStorage.pkmnImagesList.add(DataStorage.loadImage(imageName, context));
-                    }
+                    System.out.println("Downloading image " + id);
+                    String imageUrl = _UrlImages + id + ".png";
+                    Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(imageUrl).getContent());
+                    DataStorage.pkmnImagesList.add(bitmap);
                 }
             } catch (Exception e) {
                 System.out.println("Error DownloadData.java: doInBackground() - " + e.getMessage());

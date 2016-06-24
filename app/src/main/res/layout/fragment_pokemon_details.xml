@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:weightSum="2"
     tools:context=".PokemonDetailsFragment"
-    android:background="@color/red">
+    android:background="@color/red_bright">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
         android:text="001 Bulbasaur"
         android:id="@+id/detailsName"
         android:gravity="center"
-        android:background="@color/beige"
+        android:background="@android:color/white"
         android:textColor="@color/blue_grey_800_50p"
         android:textSize="25sp"
         android:padding="@dimen/details_margin"
@@ -37,7 +37,7 @@
             android:id="@+id/detailsImage"
             android:src="@mipmap/ic_launcher"
             android:layout_weight="1"
-            android:background="@color/beige"
+            android:background="@android:color/white"
             android:padding="@dimen/details_margin"
             android:layout_marginRight="@dimen/details_margin" />
 
@@ -45,8 +45,17 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/beige"
+            android:background="@android:color/white"
             android:padding="@dimen/details_margin">
+
+            <TableRow>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Types:"
+                    android:textColor="@color/blue_grey_800_50p"
+                    android:textSize="25sp"/>
+            </TableRow>
 
             <TableRow>
                 <TextView
@@ -84,7 +93,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Description"
-            android:background="@color/beige"
+            android:background="@android:color/white"
             android:textColor="@color/blue_grey_800_50p"
             android:textSize="25sp"
             android:padding="@dimen/details_margin" />
@@ -102,7 +111,7 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text=""
                     android:id="@+id/detailsDescription"
-                    android:background="@color/beige"
+                    android:background="@android:color/white"
                     android:textColor="@color/blue_grey_800_50p"
                     android:textSize="25sp"
                     android:padding="@dimen/details_margin" />

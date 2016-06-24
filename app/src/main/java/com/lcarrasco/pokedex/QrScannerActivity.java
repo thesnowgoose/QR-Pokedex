@@ -3,8 +3,10 @@ package com.lcarrasco.pokedex;
 import android.graphics.PointF;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -14,6 +16,8 @@ import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.lcarrasco.model.IPokemonApi;
+import com.lcarrasco.model.Pokemon;
 
 import org.apache.commons.lang3.text.WordUtils;
 
@@ -41,6 +45,8 @@ public class QrScannerActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr_scanner);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         spinner = (ProgressBar) findViewById(R.id.progressBar);
         pokemonPicture = (SimpleDraweeView) findViewById(R.id.pokemonPicture);
         pokemonTV = (TextView) findViewById(R.id.pokemonTextView);
@@ -54,6 +60,18 @@ public class QrScannerActivity extends AppCompatActivity
                 eraseScreen();
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void eraseScreen(){

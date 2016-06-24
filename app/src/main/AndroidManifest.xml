@@ -19,11 +19,14 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".QrScannerActivity"></activity>
+        <activity
+            android:name=".QrScannerActivity"
+            android:screenOrientation="portrait"
+            android:parentActivityName="com.lcarrasco.pokedex.MainActivity">
+        </activity>
     </application>
 
 </manifest>

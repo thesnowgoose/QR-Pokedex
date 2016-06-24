@@ -1,7 +1,4 @@
-package com.lcarrasco.pokedex;
-
-
-import java.util.List;
+package com.lcarrasco.model;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -12,10 +9,13 @@ public interface IPokemonApi {
     @GET("pokemon/{id}")
     Call<Pokemon> getPokemon(@Path("id") String id);
 
+    @GET("pokemon/{id}")
+    Call<Types> getPokemonTypes(@Path("id") int id);
+
     @GET("pokemon")
-    Call<List<Pokemon>> getPokemonList(@Query("limit") String limit);
+    Call<PokemonListResult> getPokemonList(@Query("limit") String limit);
 
     @GET("pokemon-species/{id}")
-    Call<Pokemon> getDescription(@Path("id") String id);
+    Call<PokemonDescription> getDescription(@Path("id") int id);
 
 }

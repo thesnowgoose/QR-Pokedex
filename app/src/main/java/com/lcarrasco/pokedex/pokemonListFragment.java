@@ -36,6 +36,7 @@ public class PokemonListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         final Activity activity = getActivity();
         final View view = inflater.inflate(R.layout.fragment_pokemon_list, container, false);
         final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
@@ -81,9 +82,9 @@ public class PokemonListFragment extends Fragment {
         public void onBindViewHolder(ViewHolder holder, final int position) {
             try {
 
-                final String name = DataStorage.pokemonObjList.get(position).getName();
+                final int id = DataStorage.pokemonList.get(position).getId();
+                final String name = DataStorage.pokemonList.get(position).getName();
                 final Bitmap picture = DataStorage.pkmnImagesList.get(position);
-                final int id = DataStorage.pokemonObjList.get(position).getId();
 
                 holder.setData(name, picture);
 
@@ -96,12 +97,11 @@ public class PokemonListFragment extends Fragment {
             } catch (Exception e) {
                 System.out.println("Error PokemonListFragment: onBindViewHolder - " + e.getMessage());
             }
-
         }
 
         @Override
         public int getItemCount() {
-            return DataStorage.pokemonObjList.size();
+            return DataStorage.pokemonList.size();
         }
     }
 

@@ -8,26 +8,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.lcarrasco.model.IPokemonApi;
+import com.lcarrasco.model.PokemonDescription;
+import com.lcarrasco.model.Types;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PokemonDetailsFragment extends Fragment {
     private final static String ARGS_PKMN_ID = "pkmnid";
-    private static String _RootUrl = "http://pokeapi.co/api/v2/";
-    private static String _DescriptionUrl = "pokemon-species/";
-    private static String _TypesUrl = "pokemon/";
+    private static String _UrlPokeApi = "http://pokeapi.co/api/v2/";
 
-    private String pkmnDesc;
     private int id;
     private View view;
-    private boolean previousDescFound = false;
+
+    private boolean descriptionFound = false;
+    private boolean typesFound = false;
 
     public static PokemonDetailsFragment newInstance(int id){
 
@@ -49,16 +49,15 @@ public class PokemonDetailsFragment extends Fragment {
         super.onAttach(context);
         id = getArguments().getInt(ARGS_PKMN_ID);
 
-        if (DataStorage.load(context, id).split("\\|").length < 4) { // Has pokemon description and type?
-            // If its less than 4, it means details hasn't been saved yet
-            String mutableUrl = _RootUrl + _DescriptionUrl + id;
-            VolleyRequestQueue.getInstance(context).addRequest(buildDescRequest(mutableUrl));
-        }
-        else {
-            previousDescFound = true;
-            // Get description from shared preferences
-            DataStorage.pokemonObjList.get(id-1).setDescription(DataStorage.load(context, id).split("\\|")[2]);
-        }
+        if (DataStorage.pokemonList.get(id-1).getDescription() == null)
+            buildDescriptionRequest();
+        else
+            descriptionFound = true;
+
+        if (DataStorage.pokemonList.get(id-1).getType1() == null)
+            buildTypesRequest();
+        else
+            typesFound = true;
     }
 
     @Override
@@ -66,106 +65,91 @@ public class PokemonDetailsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_pokemon_details, container, false);
+
         final TextView name_tv = (TextView) view.findViewById(R.id.detailsName);
         final ImageView image_iv = (ImageView) view.findViewById(R.id.detailsImage);
-
-        if (previousDescFound){
-            final TextView desc_tv = (TextView) view.findViewById(R.id.detailsDescription);
-            desc_tv.setText(DataStorage.pokemonObjList.get(id-1).getDescription());
-            final TextView type1_tv = (TextView) view.findViewById(R.id.type1);
-            type1_tv.setText(DataStorage.pokemonObjList.get(id-1).getType1());
-            final TextView type2_tv = (TextView) view.findViewById(R.id.type2);
-            type2_tv.setText(DataStorage.pokemonObjList.get(id-1).getType2());
-        }
-        name_tv.setText(String.format("%03d", id) + " " + DataStorage.pokemonObjList.get(id-1).getName());
+        name_tv.setText(String.format("%03d", id) + " " +
+                DataStorage.pokemonList.get(id-1).getName());
         image_iv.setImageBitmap(DataStorage.pkmnImagesList.get(id-1));
+
+        if (descriptionFound)
+            updateDescriptionOnUI();
+        if (typesFound)
+            updateTypesOnUI();
 
         return view;
     }
 
-    private JsonObjectRequest buildDescRequest(String urlDex) {
-        return new JsonObjectRequest(Request.Method.GET, urlDex, null,
-                new Response.Listener<JSONObject>() {
+    private void updateDescriptionOnUI(){
+        if (view != null) {
+            final TextView desc_tv = (TextView) view.findViewById(R.id.detailsDescription);
+            desc_tv.setText(DataStorage.pokemonList.get(id - 1).getDescription());
+        }
+    }
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONArray detailsPkmnArray = new JSONArray(response.getString("flavor_text_entries"));
+    private void updateTypesOnUI(){
+        if (view != null) {
+            final TextView type1_tv = (TextView) view.findViewById(R.id.type1);
+            final TextView type2_tv = (TextView) view.findViewById(R.id.type2);
+            type1_tv.setText(DataStorage.pokemonList.get(id - 1).getType1());
+            type2_tv.setText(DataStorage.pokemonList.get(id - 1).getType2());
+        }
+    }
 
-                            pkmnDesc = new JSONObject(detailsPkmnArray.get(1)
-                                    .toString())
-                                    .getString("flavor_text");
+    private void buildDescriptionRequest() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(_UrlPokeApi)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
 
-                            final TextView desc_tv = (TextView) view.findViewById(R.id.detailsDescription);
-                            desc_tv.setText(pkmnDesc);
+        IPokemonApi pokeApiService = retrofit.create(IPokemonApi.class);
+        Call<PokemonDescription> pokemonDescription = pokeApiService.getDescription(id);
 
-                            DataStorage.pokemonObjList.get(id-1).setDescription(pkmnDesc);
-
-                            Context context = getActivity();
-                            DataStorage.save(context, id, pkmnDesc);
-                            System.out.println("Downloaded description for pokemon " + id);
-
-                        } catch (Exception e) {
-//                        Toast.makeText(context, "Error Loading JSON", Toast.LENGTH_SHORT).show();
-                            System.out.println("Error pokemonDetailsFragment - " + e.getMessage());
-                        }
-
-                        VolleyRequestQueue.getInstance(getActivity()).addRequest(buildTypesRequest(_RootUrl + _TypesUrl + id));
-
-                    }
-                }, new Response.ErrorListener() {
+        pokemonDescription.enqueue(new Callback<PokemonDescription>() {
+            @Override
+            public void onResponse(Call<PokemonDescription> call, retrofit2.Response<PokemonDescription> response) {
+                if (response.code() != 200)
+                    Toast.makeText(getContext(), "Description not found", Toast.LENGTH_SHORT).show();
+                else {
+                    String description = response.body().getFlavorTextEntries().get(1).getFlavorText();
+                    DataStorage.updatePokemonDescription(id, description);
+                    updateDescriptionOnUI();
+                }
+            }
 
             @Override
-            public void onErrorResponse(VolleyError error) {
-                System.out.println("No response from API pokemonDetailsFragment: buildDescRequest - " + error);
-                error.printStackTrace();
+            public void onFailure(Call<PokemonDescription> call, Throwable t) {
+                Toast.makeText(getContext(), "Unable to load description", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private void buildTypesRequest() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(_UrlPokeApi)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        IPokemonApi pokeApiService = retrofit.create(IPokemonApi.class);
+        Call<Types> pokemonTypes = pokeApiService.getPokemonTypes(id);
+
+        pokemonTypes.enqueue(new Callback<Types>() {
+            @Override
+            public void onResponse(Call<Types> call, retrofit2.Response<Types> response) {
+                if (response.code() != 200)
+                    Toast.makeText(getContext(), "Types not found", Toast.LENGTH_SHORT).show();
+                else {
+                    DataStorage.updatePokemonTypes(id, response.body().getTypes());
+                    updateTypesOnUI();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Types> call, Throwable t) {
+                Toast.makeText(getContext(), "Unable to load types", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private JsonObjectRequest buildTypesRequest(String url) {
-        return new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-
-                        try {
-                            JSONArray types = new JSONArray(response.getString("types"));
-                            JSONObject t1 = new JSONObject(types.getJSONObject(0).getString("type"));
-                            String type1 = t1.getString("name");
-                            String type2 = "";
-
-                            if (types.length() > 1) {
-                                JSONObject t2 = new JSONObject(types.getJSONObject(1).getString("type"));
-                                type2 = t2.getString("name");
-                            }
-
-                            final TextView type1_tv = (TextView) view.findViewById(R.id.type1);
-                            type1_tv.setText(type1);
-                            final TextView type2_tv = (TextView) view.findViewById(R.id.type2);
-                            type2_tv.setText(type2);
-
-                            updateDataAndList(type1, type2);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        System.out.println("No response from API pokemonDetailsFragment: buildDescRequest - " + volleyError);
-                        volleyError.printStackTrace();
-                    }
-                });
-    }
-
-    private void updateDataAndList(String t1, String t2){
-        DataStorage.pokemonObjList.get(id-1).setType1(t1);
-        DataStorage.pokemonObjList.get(id-1).setType2(t2);
-
-        Context context = getActivity();
-        DataStorage.save(context, id, t1 + "|" + t2);
-    }
 }
