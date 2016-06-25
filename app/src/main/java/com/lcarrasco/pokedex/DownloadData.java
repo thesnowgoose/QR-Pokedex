@@ -1,13 +1,12 @@
 package com.lcarrasco.pokedex;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.provider.MediaStore;
 import android.widget.Toast;
 
+import com.lcarrasco.Controller.ImagesManager;
 import com.lcarrasco.model.IPokemonApi;
 import com.lcarrasco.model.Pokemon;
 import com.lcarrasco.model.PokemonListResult;
@@ -39,9 +38,8 @@ public class DownloadData {
 
         PokemonRealmStorage.init(context);
         if (PokemonRealmStorage.hasData()) {
-            // Loads realm onto DataStorage.pokemonList
             PokemonRealmStorage.loadData();
-            new GetImages().execute();
+            new GetImages(context).execute();
         } else
             buildPkmnListRequest(context);
     }
@@ -78,30 +76,42 @@ public class DownloadData {
                         pokemonList.add(createPkmn(id, WordUtils.capitalize(name)));
                     }
                     PokemonRealmStorage.save(pokemonList);
-                    new GetImages().execute();
+                    new GetImages(context).execute();
                 }
             }
 
             @Override
             public void onFailure(Call<PokemonListResult> call, Throwable t) {
+                Toast.makeText(context, "Pokémon list not available", Toast.LENGTH_SHORT).show();
                 System.out.println("Failure to get request");
             }
         });
     }
 
     private static class GetImages extends AsyncTask<String, Integer, Long> {
+
+        private Context context;
+        protected GetImages(Context context){ this.context = context; }
+
         @Override
         protected Long doInBackground(String... params) {
             try {
-                for (int i = 0; i < _totalPkmn; i++) {
+                for (int i = PokemonRealmStorage.pkmnImagesList.size(); i < _totalPkmn; i++) {
                     int id = i+1;
-                    System.out.println("Downloading image " + id);
-                    String imageUrl = _urlImages + id + ".png";
-                    Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(imageUrl).getContent());
-                    PokemonRealmStorage.pkmnImagesList.add(bitmap);
-//                    MediaStore.Images.Media.insertImage()
+                    if (!ImagesManager.imageExists(context, "pkmn" + id)) {
+                        System.out.println("Downloading image " + id);
+                        String imageUrl = _urlImages + id + ".png";
+                        Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(imageUrl).getContent());
+                        PokemonRealmStorage.pkmnImagesList.add(bitmap);
+                        ImagesManager.saveImage("pkmn" + id, bitmap, context);
+                    } else {
+                        PokemonRealmStorage.pkmnImagesList.add(
+                                ImagesManager.loadImage("pkmn" + id, context)
+                        );
+                    }
                 }
             } catch (Exception e) {
+                Toast.makeText(context, "Error downloading images", Toast.LENGTH_SHORT).show();
                 System.out.println("Error DownloadData.java: doInBackground() - " + e.getMessage());
                 e.printStackTrace();
             }
@@ -117,6 +127,5 @@ public class DownloadData {
     public interface OnFinishLoading {
         void onFinishLoading();
     }
-
 
 }

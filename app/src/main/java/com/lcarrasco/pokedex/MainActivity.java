@@ -14,7 +14,8 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
                     implements PokemonListFragment.OnPokemonSelected,
-                               DownloadData.OnFinishLoading {
+                               MenuFragment.OnScreenLoading,
+                               DownloadData.OnFinishLoading{
 
     public final static String MEUNU_FRAGMENT = "menu";
     public final static String PKMN_LIST = "listFragment";
@@ -52,9 +53,6 @@ public class MainActivity extends AppCompatActivity
                 return super.onOptionsItemSelected(item);
         }
 
-        if (getSupportFragmentManager().getBackStackEntryCount() == 1)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -67,7 +65,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(this, QrScannerActivity.class));
 
             } else {
-                Toast.makeText(this, "You can't scan Pokémon", Toast.LENGTH_SHORT);
+                Toast.makeText(this, "You can't scan Pokémon", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -80,7 +78,7 @@ public class MainActivity extends AppCompatActivity
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.CAMERA)) {
 
-                Toast.makeText(this, "You can't scan Pokémon", Toast.LENGTH_SHORT);
+                Toast.makeText(this, "You can't scan Pokémon", Toast.LENGTH_SHORT).show();
 
             } else {
                 ActivityCompat.requestPermissions(this,
@@ -120,4 +118,8 @@ public class MainActivity extends AppCompatActivity
                 .commit();
     }
 
+    @Override
+    public void onScreenLoading() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    }
 }
