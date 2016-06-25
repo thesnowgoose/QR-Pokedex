@@ -49,12 +49,12 @@ public class PokemonDetailsFragment extends Fragment {
         super.onAttach(context);
         id = getArguments().getInt(ARGS_PKMN_ID);
 
-        if (DataStorage.pokemonList.get(id-1).getDescription() == null)
+        if (PokemonRealmStorage.pokemonList.get(id-1).getDescription() == null)
             buildDescriptionRequest();
         else
             descriptionFound = true;
 
-        if (DataStorage.pokemonList.get(id-1).getType1() == null)
+        if (PokemonRealmStorage.pokemonList.get(id-1).getType1() == null)
             buildTypesRequest();
         else
             typesFound = true;
@@ -69,8 +69,8 @@ public class PokemonDetailsFragment extends Fragment {
         final TextView name_tv = (TextView) view.findViewById(R.id.detailsName);
         final ImageView image_iv = (ImageView) view.findViewById(R.id.detailsImage);
         name_tv.setText(String.format("%03d", id) + " " +
-                DataStorage.pokemonList.get(id-1).getName());
-        image_iv.setImageBitmap(DataStorage.pkmnImagesList.get(id-1));
+                PokemonRealmStorage.pokemonList.get(id-1).getName());
+        image_iv.setImageBitmap(PokemonRealmStorage.pkmnImagesList.get(id-1));
 
         if (descriptionFound)
             updateDescriptionOnUI();
@@ -83,7 +83,7 @@ public class PokemonDetailsFragment extends Fragment {
     private void updateDescriptionOnUI(){
         if (view != null) {
             final TextView desc_tv = (TextView) view.findViewById(R.id.detailsDescription);
-            desc_tv.setText(DataStorage.pokemonList.get(id - 1).getDescription());
+            desc_tv.setText(PokemonRealmStorage.pokemonList.get(id - 1).getDescription());
         }
     }
 
@@ -91,8 +91,8 @@ public class PokemonDetailsFragment extends Fragment {
         if (view != null) {
             final TextView type1_tv = (TextView) view.findViewById(R.id.type1);
             final TextView type2_tv = (TextView) view.findViewById(R.id.type2);
-            type1_tv.setText(DataStorage.pokemonList.get(id - 1).getType1());
-            type2_tv.setText(DataStorage.pokemonList.get(id - 1).getType2());
+            type1_tv.setText(PokemonRealmStorage.pokemonList.get(id - 1).getType1());
+            type2_tv.setText(PokemonRealmStorage.pokemonList.get(id - 1).getType2());
         }
     }
 
@@ -112,7 +112,7 @@ public class PokemonDetailsFragment extends Fragment {
                     Toast.makeText(getContext(), "Description not found", Toast.LENGTH_SHORT).show();
                 else {
                     String description = response.body().getFlavorTextEntries().get(1).getFlavorText();
-                    DataStorage.updatePokemonDescription(id, description);
+                    PokemonRealmStorage.updatePokemonDescription(id, description);
                     updateDescriptionOnUI();
                 }
             }
@@ -140,7 +140,7 @@ public class PokemonDetailsFragment extends Fragment {
                 if (response.code() != 200)
                     Toast.makeText(getContext(), "Types not found", Toast.LENGTH_SHORT).show();
                 else {
-                    DataStorage.updatePokemonTypes(id, response.body().getTypes());
+                    PokemonRealmStorage.updatePokemonTypes(id, response.body().getTypes());
                     updateTypesOnUI();
                 }
             }

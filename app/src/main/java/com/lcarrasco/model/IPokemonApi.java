@@ -12,8 +12,8 @@ public interface IPokemonApi {
     @GET("pokemon/{id}")
     Call<Types> getPokemonTypes(@Path("id") int id);
 
-    @GET("pokemon")
-    Call<PokemonListResult> getPokemonList(@Query("limit") String limit);
+    @GET("pokemon/")
+    Call<PokemonListResult> getPokemonList(@Query("limit") int limit);
 
     @GET("pokemon-species/{id}")
     Call<PokemonDescription> getDescription(@Path("id") int id);

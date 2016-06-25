@@ -98,7 +98,7 @@ public class QrScannerActivity extends AppCompatActivity
         if (!validQRCode(data))
             showMissingNo(pokemonNotFound);
         else {
-            pkmnID = data.split("/pokemon/")[1];
+            pkmnID = data.split(":code")[1];
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(urlPokeApi)
                     .addConverterFactory(GsonConverterFactory.create())
@@ -133,7 +133,7 @@ public class QrScannerActivity extends AppCompatActivity
     }
 
     private boolean validQRCode(String qrCodeString){
-        return qrCodeString.contains("/pokemon/");
+        return qrCodeString.matches("\\w{5}[lk4r1a]\\w{5}[ek4r1a]\\w{5}[0k4r1a]:code[0-9]+");
     }
 
     @Override

@@ -82,9 +82,9 @@ public class PokemonListFragment extends Fragment {
         public void onBindViewHolder(ViewHolder holder, final int position) {
             try {
 
-                final int id = DataStorage.pokemonList.get(position).getId();
-                final String name = DataStorage.pokemonList.get(position).getName();
-                final Bitmap picture = DataStorage.pkmnImagesList.get(position);
+                final int id = PokemonRealmStorage.pokemonList.get(position).getId();
+                final String name = PokemonRealmStorage.pokemonList.get(position).getName();
+                final Bitmap picture = PokemonRealmStorage.pkmnImagesList.get(position);
 
                 holder.setData(name, picture);
 
@@ -101,7 +101,7 @@ public class PokemonListFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return DataStorage.pokemonList.size();
+            return PokemonRealmStorage.pokemonList.size();
         }
     }
 
