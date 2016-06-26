@@ -12,6 +12,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.lcarrasco.Controller.DownloadData;
+import com.lcarrasco.Controller.PokemonRealmStorage;
+
 public class MainActivity extends AppCompatActivity
                     implements PokemonListFragment.OnPokemonSelected,
                                MenuFragment.OnScreenLoading,

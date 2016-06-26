@@ -1,4 +1,4 @@
-package com.lcarrasco.pokedex;
+package com.lcarrasco.Controller;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.lcarrasco.Controller.ImagesManager;
+import com.lcarrasco.Controller.PokemonRealmStorage;
 import com.lcarrasco.model.IPokemonApi;
 import com.lcarrasco.model.Pokemon;
 import com.lcarrasco.model.PokemonListResult;
@@ -26,7 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class DownloadData {
 
-    private static final int _totalPkmn = 151;
+    public static final int _totalPkmn = 151;
     private static final String _urlPokeApi = "http://pokeapi.co/api/v2/";
     private static final String _urlImages = "http://pokeapi.co/media/img/";
 

@@ -1,4 +1,4 @@
-package com.lcarrasco.pokedex;
+package com.lcarrasco.Controller;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -45,13 +45,13 @@ public class PokemonRealmStorage {
         pokemonList = realm.where(Pokemon.class).findAll();
     }
 
-    protected static void updatePokemonDescription(int id, String description){
+    public static void updatePokemonDescription(int id, String description){
         realm.beginTransaction();
         PokemonRealmStorage.pokemonList.get(id-1).setDescription(description);
         realm.commitTransaction();
     }
 
-    protected static void updatePokemonTypes(int id, List<Type> types){
+    public static void updatePokemonTypes(int id, List<Type> types){
 
         String t1 = "";
 
@@ -65,7 +65,18 @@ public class PokemonRealmStorage {
         realm.commitTransaction();
     }
 
-    protected static void closeRealm(){
+    public static void updateCapturedState(int id, boolean captured){
+        realm.beginTransaction();
+        PokemonRealmStorage.pokemonList.get(id-1).setCaptured(captured);
+        realm.commitTransaction();
+    }
+
+    public static boolean alreadyCaptured(int id){
+        Pokemon p = realm.where(Pokemon.class).equalTo("id", id).findFirst();
+        return p.isCaptured();
+    }
+
+    public static void closeRealm(){
         realm.close();
     }
 

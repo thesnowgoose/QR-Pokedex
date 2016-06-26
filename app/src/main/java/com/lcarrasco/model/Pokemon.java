@@ -22,6 +22,8 @@ public class Pokemon extends RealmObject {
 
     private String description;
 
+    private boolean captured = false;
+
 
     public int getId() {
         return id;
@@ -43,6 +45,13 @@ public class Pokemon extends RealmObject {
         return type2;
     }
 
+    public boolean isCaptured() {
+        return captured;
+    }
+
+    public void setCaptured(boolean captured) {
+        this.captured = captured;
+    }
 
     public void setType1(String type1) {
         this.type1 = type1;

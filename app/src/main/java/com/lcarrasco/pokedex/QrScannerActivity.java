@@ -16,6 +16,8 @@ import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.lcarrasco.Controller.DownloadData;
+import com.lcarrasco.Controller.PokemonRealmStorage;
 import com.lcarrasco.model.IPokemonApi;
 import com.lcarrasco.model.Pokemon;
 
@@ -39,6 +41,8 @@ public class QrScannerActivity extends AppCompatActivity
 
     private boolean permittedScanning = true;
     private String urlPokeApi = "http://pokeapi.co/api/v2/";
+
+    private int id = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +79,15 @@ public class QrScannerActivity extends AppCompatActivity
     }
 
     private void eraseScreen(){
+
+        if (id != 0 && id <= DownloadData._totalPkmn) {
+            if (!PokemonRealmStorage.alreadyCaptured(id))
+                PokemonRealmStorage.updateCapturedState(id, true);
+            else
+                Toast.makeText(getApplication(), "Pokemon already captured", Toast.LENGTH_SHORT).show();
+            id = 0;
+        }
+
         pokemonPicture.setImageBitmap(null);
         pokemonTV.setText("");
     }
@@ -114,15 +127,20 @@ public class QrScannerActivity extends AppCompatActivity
                 public void onResponse(Call<Pokemon> call, Response<Pokemon> response) {
                     int statusCode = response.code();
                     Pokemon p = response.body();
-                    if (statusCode == 200)
+                    if (statusCode == 200) {
+                        id = p.getId();
                         new GetPokemonImage(pokemonNotFound).execute(p.getName());
-                    else
-                        showMissingNo(pokemonNotFound);
+                    }
+                    else {
+                        Toast.makeText(getApplication(), "Unable to connect", Toast.LENGTH_SHORT).show();
+                        spinner.setVisibility(View.GONE);
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<Pokemon> call, Throwable t) {
-                    showMissingNo(pokemonNotFound);
+                    spinner.setVisibility(View.GONE);
+                    Toast.makeText(getApplication(), "Unable to connect", Toast.LENGTH_SHORT).show();
                 }
             });
         }

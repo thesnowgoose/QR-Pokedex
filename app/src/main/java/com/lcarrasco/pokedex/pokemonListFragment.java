@@ -3,6 +3,7 @@ package com.lcarrasco.pokedex;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,8 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.RecyclerView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.lcarrasco.Controller.PokemonRealmStorage;
 
 public class PokemonListFragment extends Fragment {
 
@@ -54,17 +58,23 @@ public class PokemonListFragment extends Fragment {
             // each data item is just a string in this case
             private ImageView mImageView;
             private TextView mNameTextView;
+            private FrameLayout frameLayout;
 
             public ViewHolder(View v) {
                 super(v);
 
                 mImageView = (ImageView) v.findViewById(R.id.pokImage);
                 mNameTextView = (TextView) v.findViewById(R.id.pokName);
+                frameLayout = (FrameLayout) v.findViewById(R.id.frame);
             }
 
-            protected void setData(String name, Bitmap image) {
+            protected void setData(String name, Bitmap image, boolean captured) {
                 mImageView.setImageBitmap(image);
                 mNameTextView.setText(name);
+                if (captured)
+                    frameLayout.setForeground(getResources().getDrawable(R.drawable.pokeball));
+                else
+                    frameLayout.setForeground(null);
             }
         }
 
@@ -81,19 +91,21 @@ public class PokemonListFragment extends Fragment {
         @Override
         public void onBindViewHolder(ViewHolder holder, final int position) {
             try {
+                if (position < PokemonRealmStorage.pokemonList.size()) {
+                    final int id = PokemonRealmStorage.pokemonList.get(position).getId();
+                    final String name = PokemonRealmStorage.pokemonList.get(position).getName();
+                    final boolean captured = PokemonRealmStorage.pokemonList.get(position).isCaptured();
+                    final Bitmap picture = PokemonRealmStorage.pkmnImagesList.get(position);
 
-                final int id = PokemonRealmStorage.pokemonList.get(position).getId();
-                final String name = PokemonRealmStorage.pokemonList.get(position).getName();
-                final Bitmap picture = PokemonRealmStorage.pkmnImagesList.get(position);
+                    holder.setData(name, picture, captured);
 
-                holder.setData(name, picture);
-
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mListener.onPokemonSelected(id);
-                    }
-                });
+                    holder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mListener.onPokemonSelected(id);
+                        }
+                    });
+                }
             } catch (Exception e) {
                 System.out.println("Error PokemonListFragment: onBindViewHolder - " + e.getMessage());
             }

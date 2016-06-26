@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lcarrasco.Controller.PokemonRealmStorage;
 import com.lcarrasco.model.IPokemonApi;
 import com.lcarrasco.model.PokemonDescription;
 import com.lcarrasco.model.Types;
