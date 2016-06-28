@@ -6,8 +6,11 @@ import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -24,6 +27,7 @@ public class MainActivity extends AppCompatActivity
     public final static String PKMN_LIST = "listFragment";
     public final static String PKMN_DETAILS = "details";
     public final static String LOADING = "LOADING";
+    public final static String INFO = "INFO";
 
     public final static int PERMISIONS_REQUEST_CAMERA = 999;
 
@@ -31,6 +35,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -47,11 +53,20 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar, menu);
+        return true;
+    }
+
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 this.getSupportFragmentManager().popBackStack();
                 break;
+            case R.id.action_info:
+                openInfoFragment();
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -93,11 +108,21 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void openPokedex(View v){
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        showDisplayHomeAsUp(true);
 
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.main_layout, PokemonListFragment.newInstance(), PKMN_LIST)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    public void openInfoFragment(){
+        showDisplayHomeAsUp(true);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.main_layout, InfoFragment.newInstance(), INFO)
                 .addToBackStack(null)
                 .commit();
     }
@@ -123,6 +148,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onScreenLoading() {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        showDisplayHomeAsUp(false);
+    }
+
+    private void showDisplayHomeAsUp(boolean show){
+        getSupportActionBar().setDisplayHomeAsUpEnabled(show);
     }
 }

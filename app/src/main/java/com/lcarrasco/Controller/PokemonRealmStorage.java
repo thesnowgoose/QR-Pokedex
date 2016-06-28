@@ -22,8 +22,11 @@ public class PokemonRealmStorage {
 
     private static Realm realm;
 
-    public static void init(Context context){
-        RealmConfiguration config = new RealmConfiguration.Builder(context).build();
+    public static void init(Context context) {
+        RealmConfiguration config = new RealmConfiguration
+                .Builder(context)
+                .deleteRealmIfMigrationNeeded()
+                .build();
         Realm.setDefaultConfiguration(config);
 //        Realm.deleteRealm(config);
         realm = Realm.getDefaultInstance();

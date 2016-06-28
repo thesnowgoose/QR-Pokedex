@@ -52,11 +52,15 @@
         android:layout_height="match_parent"
         android:gravity="bottom">
 
-        <TextView
+        <View
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/red_bright" />
+
+        <View
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:id="@+id/textView2"
-            android:background="@color/red_bright" />
+            android:layout_height="5dp"
+            android:background="@color/red" />
 
     </LinearLayout>
 

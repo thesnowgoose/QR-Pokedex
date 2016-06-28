@@ -3,9 +3,10 @@ package com.lcarrasco.pokedex;
 import android.graphics.PointF;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -48,6 +49,8 @@ public class QrScannerActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr_scanner);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -61,9 +64,18 @@ public class QrScannerActivity extends AppCompatActivity
         pokemonPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                eraseScreen();
+                eraseScreen(true);
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar, menu);
+
+        MenuItem infoItem = menu.findItem(R.id.action_info);
+        infoItem.setVisible(false);
+        return true;
     }
 
     @Override
@@ -78,11 +90,13 @@ public class QrScannerActivity extends AppCompatActivity
         }
     }
 
-    private void eraseScreen(){
+    private void eraseScreen(boolean imageTaped){
 
-        if (id != 0 && id <= DownloadData._totalPkmn) {
-            if (!PokemonRealmStorage.alreadyCaptured(id))
+        if (id != 0 && id <= DownloadData._totalPkmn && imageTaped) {
+            if (!PokemonRealmStorage.alreadyCaptured(id)) {
                 PokemonRealmStorage.updateCapturedState(id, true);
+                Toast.makeText(getApplication(), "You've captured it", Toast.LENGTH_SHORT).show();
+            }
             else
                 Toast.makeText(getApplication(), "Pokemon already captured", Toast.LENGTH_SHORT).show();
             id = 0;
@@ -95,7 +109,7 @@ public class QrScannerActivity extends AppCompatActivity
     @Override
     public void onQRCodeRead(String data, PointF[] points) {
         if (permittedScanning) {
-            eraseScreen();
+            eraseScreen(false);
             spinner.setVisibility(View.VISIBLE);
 
             permittedScanning = false;
@@ -111,7 +125,7 @@ public class QrScannerActivity extends AppCompatActivity
         if (!validQRCode(data))
             showMissingNo(pokemonNotFound);
         else {
-            pkmnID = data.split(":code")[1];
+            pkmnID = data.split(":id")[1];
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(urlPokeApi)
                     .addConverterFactory(GsonConverterFactory.create())
@@ -121,7 +135,6 @@ public class QrScannerActivity extends AppCompatActivity
             Call<Pokemon> pokemonCall = pokeApiService.getPokemon(pkmnID);
 
             pokemonCall.enqueue(new Callback<Pokemon>() {
-                Uri uri;
 
                 @Override
                 public void onResponse(Call<Pokemon> call, Response<Pokemon> response) {
@@ -151,7 +164,7 @@ public class QrScannerActivity extends AppCompatActivity
     }
 
     private boolean validQRCode(String qrCodeString){
-        return qrCodeString.matches("\\w{5}[lk4r1a]\\w{5}[ek4r1a]\\w{5}[0k4r1a]:code[0-9]+");
+        return qrCodeString.matches("pokemon:id\\d+");
     }
 
     @Override

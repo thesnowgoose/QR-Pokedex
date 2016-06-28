@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Pokédex</string>
+    <string name="app_name">Pokédex QR</string>
     <string name="catchem">Who\'s that Pokémon?!</string>
     <string name="captured">Captured Pokémon</string>
 
@@ -7,4 +7,25 @@
     <string name="saved_pkmnInfo">com.lcarrasco.pokedex.INFO_PKMN</string>
 
     <string name="url_root_PokeApi">http://pokeapi.co/api/v2/</string>
+
+    <string name="readme1">
+        <![CDATA[
+        <center><h1>Capture all Pokémon you can!!</h1></center>
+        <h3>With Pokedéx QR, you can:</h3>
+        <p>1.Scan QR codes that represents each Pokémon.</p>
+        <p>2.Capture them all after scanning them.</p>
+        <p>3.See details of each Pokémon of first gen.</p>
+        ]]>
+    </string>
+    <string name="readme2">
+        <![CDATA[
+        <h3>Instructions to generate your own QR codes:</h3>
+        <p>1.Go to any <b>\'QR code generator\'</b> web page for example <a href="http://www.qr-code-generator.com">http://www.qr-code-generator.com</a>.</p>
+        <p>2.Generate a QR code using this template "pokemon:id{Pokémon ID}" (Where Pokémon ID is the Pokémon ID!! without brackets).</p>
+        <p>3.Print it and scan it.</p>
+        <p>4.Have fun catching \'em all.</p>
+        <p><a href="https://github.com/thesnowgoose/QR-Pokedex">Check my Github for more information.</a></p>
+        ]]>
+    </string>
+
 </resources>
