@@ -2,6 +2,7 @@ package com.lcarrasco.pokedex;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -13,12 +14,17 @@ import android.widget.TextView;
 
 public class InfoFragment extends Fragment {
 
+    private static InfoFragment instance;
 
     public InfoFragment() {
     }
 
     public static InfoFragment newInstance(){
-        return new InfoFragment();
+
+        if (instance == null)
+            instance = new InfoFragment();
+
+        return instance;
     }
 
     @Override

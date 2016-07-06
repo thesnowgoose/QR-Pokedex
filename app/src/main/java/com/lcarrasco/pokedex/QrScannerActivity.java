@@ -52,6 +52,8 @@ public class QrScannerActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         spinner = (ProgressBar) findViewById(R.id.progressBar);
@@ -125,7 +127,7 @@ public class QrScannerActivity extends AppCompatActivity
         if (!validQRCode(data))
             showMissingNo(pokemonNotFound);
         else {
-            pkmnID = data.split(":id")[1];
+            pkmnID = data.split(":code")[1];
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(urlPokeApi)
                     .addConverterFactory(GsonConverterFactory.create())
@@ -164,7 +166,13 @@ public class QrScannerActivity extends AppCompatActivity
     }
 
     private boolean validQRCode(String qrCodeString){
-        return qrCodeString.matches("pokemon:id\\d+");
+        String[] number = qrCodeString.split(":code");
+        if (qrCodeString.substring(0,4).equals(Integer.toOctalString((Integer.parseInt(number[0])))))
+        if (qrCodeString.substring(5,9).equals(Integer.toOctalString((Integer.parseInt(number[1])))))
+        if (qrCodeString.substring(11,15).equals(Integer.toOctalString((Integer.parseInt(number[2])))))
+            return qrCodeString.matches("(\\d{3}[k4r1a][n3s5y][z0oey]){3}:code\\d{3}");
+
+        return false;
     }
 
     @Override

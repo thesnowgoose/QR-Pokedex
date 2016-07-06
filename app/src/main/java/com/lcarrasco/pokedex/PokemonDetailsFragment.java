@@ -21,6 +21,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PokemonDetailsFragment extends Fragment {
+    private static PokemonDetailsFragment instance;
+
     private final static String ARGS_PKMN_ID = "pkmnid";
     private static String _UrlPokeApi = "http://pokeapi.co/api/v2/";
 
@@ -31,19 +33,18 @@ public class PokemonDetailsFragment extends Fragment {
     private boolean typesFound = false;
 
     public static PokemonDetailsFragment newInstance(int id){
+        if (instance == null)
+            instance = new PokemonDetailsFragment();
 
         final Bundle bundle= new Bundle();
         bundle.putInt(ARGS_PKMN_ID, id);
 
-        final PokemonDetailsFragment fragment = new PokemonDetailsFragment();
-        fragment.setArguments(bundle);
+        instance.setArguments(bundle);
 
-        return fragment;
+        return instance;
     }
 
-    public PokemonDetailsFragment() {
-        // Required empty public constructor
-    }
+    public PokemonDetailsFragment() {  }
 
     @Override
     public void onAttach(Context context) {
@@ -65,6 +66,7 @@ public class PokemonDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        // TODO dialog fragment that appears while info is downloaded
         view = inflater.inflate(R.layout.fragment_pokemon_details, container, false);
 
         final TextView name_tv = (TextView) view.findViewById(R.id.detailsName);
@@ -109,7 +111,7 @@ public class PokemonDetailsFragment extends Fragment {
         pokemonDescription.enqueue(new Callback<PokemonDescription>() {
             @Override
             public void onResponse(Call<PokemonDescription> call, retrofit2.Response<PokemonDescription> response) {
-                if (response.code() != 200)
+                if (!response.isSuccessful())
                     Toast.makeText(getContext(), "Description not found", Toast.LENGTH_SHORT).show();
                 else {
                     String description = response.body().getFlavorTextEntries().get(1).getFlavorText();
@@ -138,7 +140,7 @@ public class PokemonDetailsFragment extends Fragment {
         pokemonTypes.enqueue(new Callback<Types>() {
             @Override
             public void onResponse(Call<Types> call, retrofit2.Response<Types> response) {
-                if (response.code() != 200)
+                if (!response.isSuccessful())
                     Toast.makeText(getContext(), "Types not found", Toast.LENGTH_SHORT).show();
                 else {
                     PokemonRealmStorage.updatePokemonTypes(id, response.body().getTypes());

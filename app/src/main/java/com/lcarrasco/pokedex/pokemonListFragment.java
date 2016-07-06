@@ -20,9 +20,12 @@ import com.lcarrasco.Controller.PokemonRealmStorage;
 public class PokemonListFragment extends Fragment {
 
     private OnPokemonSelected mListener;
+    private static PokemonListFragment instance;
 
     public static PokemonListFragment newInstance(){
-        return new PokemonListFragment();
+        if (instance == null)
+            instance = new PokemonListFragment();
+        return instance;
     }
 
     public PokemonListFragment() { }

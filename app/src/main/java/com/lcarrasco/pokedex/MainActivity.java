@@ -66,7 +66,9 @@ public class MainActivity extends AppCompatActivity
                 this.getSupportFragmentManager().popBackStack();
                 break;
             case R.id.action_info:
+                item.setVisible(false);
                 openInfoFragment();
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -140,6 +142,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFinishLoading() {
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.main_layout, MenuFragment.newInstance(), MEUNU_FRAGMENT)
